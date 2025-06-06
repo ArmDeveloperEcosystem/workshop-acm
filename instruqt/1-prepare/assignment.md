@@ -1,27 +1,15 @@
-## Before you begin
-===
+# Azure Cloud Migration workshop
 
-This workshop walks you through running the Meta Llama 3.1 Large Language Model (LLM) using PyTorch on Arm-based servers, with performance optimizations powered by KleidiAI’s INT4 quantization kernels. The model is deployed as an interactive browser-based chatbot application using Streamlit for the frontend and the Torchchat framework in PyTorch for the backend.
+This workshop demonstrates how to create and run a quantized LLM inference pipeline using PyTorch, then deploy the backend to the cloud using a multi-architectural Azure Kubernetes service with both AMD and Arm based nodes. You will then connect a chatbot application using Streamlit and Torchchat to the AKS load balancer, allowing for a user-friendly browser-based interface powered by PyTorch and running on a scalable Kubernetes based backend.
 
-An Arm server running Ubuntu 22.04 LTS with at least 16 CPU cores, 64GB of RAM, and 50 GB of disk storage is required for this workshop. You don’t need to provision any infrastructure yourself. An instance with the necessary specifications has been automatically provisioned for you on this workshop platform.
+Through instruqt you have been given:
 
-## Overview
-===
+- An Azure subscription
+- A terminal to work in with the required tools (git, azure cli, terraform) already installed
 
-In this workshop, you will learn how to deploy and run a quantized LLM inference pipeline using PyTorch on Arm Neoverse V2-based CPUs. You’ll start by downloading the Meta Llama 3.1 model from the Hugging Face repository and apply 4-bit quantization using KleidiAI’s optimized INT4 kernels for PyTorch.
-
-You will then serve the model as a chatbot application using Streamlit and Torchchat, allowing for a user-friendly browser-based interface backed by efficient PyTorch inference.
-
-Finally, you will measure and observe performance metrics that highlight the benefits of running LLMs on Arm-based infrastructure. This hands-on experience showcases how to build scalable, efficient AI applications using open-source tools on Arm servers accelerated by KleidiAI.
-
-## Log in to your Arm instance
-===
-
-A new Arm-based AWS EC2 instance has been created for you to use in this workshop. To connect to it, run the following command in the terminal
-```bash,run
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]]
-```
-When prompted, type "yes"
+> [!NOTE]
+> Your Azure CLI should already be configured by Instruqt and authorized to the correct Azure subscription.
+> You can confirm this by running `az account show`
 
 ## Install the necessary tools
 ===

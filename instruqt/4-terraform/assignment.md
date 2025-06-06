@@ -1,19 +1,5 @@
 # Deploy resources via Terraform
 
-This workshop demonstrates how to deploy a multi-architectural Azure Kubernetes service with both AMD and Arm based nodes.
-
-Through instruqt you have been given:
-
-- An Azure subscription
-- A terminal to work in with the required tools (git, azure cli, terraform) already installed
-
-> [!NOTE]
-> Your Azure CLI should already be configured by Instruqt and authorized to the correct Azure subscription.
-> You can confirm this by running `az account show`
-
-## Plan and apply Terraform
-===
-
 In your [Terminal tab](tab-0), write the following command to prepare the current working directory for use with Terraform:
 
 [button label="Terminal"](tab-0)
@@ -22,7 +8,7 @@ In your [Terminal tab](tab-0), write the following command to prepare the curren
 terraform init
 ```
 
-### Terraform Plan
+## Terraform Plan
 
 Then you can run `terraform plan` to see what we will deploy:
 
@@ -34,7 +20,7 @@ We pass in two variables to the terraform. First is the current Azure subscripti
 
 You should get output that says there are no errors and shows you everything that will be deployed when you apply.
 
-### Terraform Apply
+## Terraform Apply
 
 After successfully running `terraform plan`, let's apply our plan to deploy via terraform:
 
