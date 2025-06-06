@@ -10,7 +10,7 @@ This tutorial provides a step-by-step guide to TO REPLACE WITH ACTUAL DESCRIPTIO
     - Use instruqt variables to store tokens???
 - [ ] Rewrite section 2 create
     - Build application on Instruqt VM (x86?), with intent of being able to make docker image. Application should work by end locally
-- [ ] Rewrite section 3 Build
+- [ ] Write section 3 Build
     - Create a standalone docker image that has model, application auto launched and open endpoint that can hit.
 - [ ] Rewrite section 4 Terraform
     - Modify kubernetes node type to be compatible with new docker image
@@ -19,9 +19,11 @@ This tutorial provides a step-by-step guide to TO REPLACE WITH ACTUAL DESCRIPTIO
 - [ ] Rewrite section 6 Deploy
     - Rewrite to combine kubernetes deployment, but not using Go app and instead using LLM application
     - Instructions for using front end against public endpoint backend
-- [ ] Rewrite section 7 Demo
+- [ ] Write section 7 Demo
     - Write quick demo of KubeArchInspect
 - [ ] Update this Readme to match actual content
+- [ ] Import this repos content into Instruqt
+- [ ] Test content in Instruqt
 
 ## Prerequisites
 
