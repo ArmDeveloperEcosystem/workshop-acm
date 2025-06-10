@@ -4,6 +4,7 @@ ARG HF_TOKEN
 FROM python:3.10-slim
 ARG HF_TOKEN
 EXPOSE 5000
+EXPOSE 8501
 
 # Install dependencies
 RUN apt-get update && \
