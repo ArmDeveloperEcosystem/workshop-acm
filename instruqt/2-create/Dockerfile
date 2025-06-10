@@ -42,19 +42,22 @@ RUN python -m venv torch_env && \
     cd ../torchchat && \
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024
 
-    
+
 # Release: 2nd stage
 FROM python:3.10-slim
-WORKDIR /
 
-RUN git clone --recursive https://github.com/pytorch/torchchat.git
+RUN apt-get update && \
+    apt-get install -y python3-pip python3-venv git
 
-RUN cd torchchat && \
-    pip install -r requirements.txt && \
+RUN python -m venv torch_env && \
+    . torch_env/bin/activate && \
+    git clone --recursive https://github.com/pytorch/torchchat.git && \
+    cd torchchat && \
+    ./install/install_requirements.sh && \
     # Install additional dependencies
     pip3 install openai==1.45.0 && \
     pip3 install httpx==0.27.2
 
-COPY --from=builder /torchchat/exportedModels/mistral.so /torchchat/exportedModels/mistral.so
+COPY --from=builder /torchchat/exportedModels /torchchat/exportedModels
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
