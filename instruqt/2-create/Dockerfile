@@ -9,8 +9,8 @@ EXPOSE 5000
 RUN apt-get update && \
     apt-get install -y gcc g++ build-essential python3-pip python3-venv git wget google-perftools
 
-RUN python3 -m venv torch_env && \
-    source torch_env/bin/activate && \
+RUN python -m venv torch_env && \
+    . torch_env/bin/activate && \
     # Clone and patch pytorch/ao
     git clone --recursive https://github.com/pytorch/ao.git && \
     cd ao && \
@@ -37,4 +37,4 @@ RUN python3 -m venv torch_env && \
     cd ../torchchat && \
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024
 
-CMD ["bash", "-c", "cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
+CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
