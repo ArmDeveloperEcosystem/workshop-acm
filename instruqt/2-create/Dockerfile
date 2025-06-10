@@ -31,10 +31,14 @@ RUN python -m venv torch_env && \
     pip install --force-reinstall torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
     cd .. && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
+    # Prepare hugging face cli
     pip install -U "huggingface_hub[cli]" && \
     git config --global credential.helper store && \
     huggingface-cli login --token $HF_TOKEN --add-to-git-credential && \
     cd ../torchchat && \
-    python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024
+    python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
+    # Install additional dependencies
+    pip3 install openai==1.45.0 && \
+    pip3 install httpx==0.27.2
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
