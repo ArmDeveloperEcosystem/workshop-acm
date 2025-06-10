@@ -1,7 +1,10 @@
 
+# syntax=docker/dockerfile:1
 ARG HF_TOKEN
 
-FROM python:3.10-slim
+
+# Build: 1st stage
+FROM python:3.10-slim AS builder
 ARG HF_TOKEN
 EXPOSE 5000
 EXPOSE 8501
@@ -37,9 +40,21 @@ RUN python -m venv torch_env && \
     git config --global credential.helper store && \
     huggingface-cli login --token $HF_TOKEN --add-to-git-credential && \
     cd ../torchchat && \
-    python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
+    python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024
+
+    
+# Release: 2nd stage
+FROM python:3.10-slim
+WORKDIR /
+
+RUN git clone --recursive https://github.com/pytorch/torchchat.git
+
+RUN cd torchchat && \
+    pip install -r requirements.txt && \
     # Install additional dependencies
     pip3 install openai==1.45.0 && \
     pip3 install httpx==0.27.2
+
+COPY --from=builder /torchchat/exportedModels/mistral.so /torchchat/exportedModels/mistral.so
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
