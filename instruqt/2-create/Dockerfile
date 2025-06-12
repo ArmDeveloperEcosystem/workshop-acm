@@ -57,7 +57,7 @@ COPY --from=builder /model /model
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
     export HF_HOME=/hfcache && \
-    export TORCHCHAT_MODELDIR=/model
+    export TORCHCHAT_MODELDIR=/model && \
     git clone --recursive https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
     ./install/install_requirements.sh && \
