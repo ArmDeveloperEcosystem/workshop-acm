@@ -13,6 +13,9 @@ EXPOSE 8501
 RUN apt-get update && \
     apt-get install -y gcc g++ build-essential python3-pip python3-venv git wget google-perftools
 
+ENV HF_HOME=/hfcache
+ENV TORCHCHAT_MODELDIR=/model
+
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Clone and patch pytorch/ao
@@ -25,7 +28,6 @@ RUN python -m venv torch_env && \
     # Clone and patch pytorch/torchchat
     git clone --recursive https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
-    export TORCHCHAT_MODELDIR=/model && \
     git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6 && \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-modified-generate.py-for-cli-and-browser.patch && \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
@@ -37,7 +39,6 @@ RUN python -m venv torch_env && \
     cd .. && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Prepare hugging face cli 
-    export HF_HOME=/hfcache && \
     pip install -U "huggingface_hub[cli]" && \
     git config --global credential.helper store && \
     huggingface-cli login --token $HF_TOKEN --add-to-git-credential && \
@@ -54,13 +55,31 @@ RUN apt-get update && \
 COPY --from=builder /hfcache /hfcache
 COPY --from=builder /model /model
 
+ENV HF_HOME=/hfcache
+ENV TORCHCHAT_MODELDIR=/model
+
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
-    export HF_HOME=/hfcache && \
-    export TORCHCHAT_MODELDIR=/model && \
+    # Clone and patch pytorch/ao
+    git clone --recursive https://github.com/pytorch/ao.git && \
+    cd ao && \
+    git checkout 174e630af2be8cd18bc47c5e530765a82e97f45b && \
+    wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Add-support-for-kleidiai-quantization-schemes.patch && \
+    git apply --whitespace=nowarn 0001-Feat-Add-support-for-kleidiai-quantization-schemes.patch && \
+    cd ../ && \
+    # Clone and patch pytorch/torchchat
     git clone --recursive https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
-    ./install/install_requirements.sh && \
+    git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6 && \
+    wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-modified-generate.py-for-cli-and-browser.patch && \
+    wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
+    git apply 0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
+    git apply --whitespace=nowarn 0001-modified-generate.py-for-cli-and-browser.patch && \
+    pip install -r requirements.txt && \
+    wget https://github.com/ArmDeveloperEcosystem/PyTorch-arm-patches/raw/main/torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
+    pip install --force-reinstall torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
+    cd .. && \
+    pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Install additional dependencies
     pip3 install openai==1.45.0 && \
     pip3 install httpx==0.27.2
