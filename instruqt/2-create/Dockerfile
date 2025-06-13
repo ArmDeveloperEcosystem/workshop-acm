@@ -40,10 +40,16 @@ RUN python -m venv torch_env && \
     # Prepare hugging face cli 
     pip install -U "huggingface_hub[cli]" && \
     git config --global credential.helper store && \
-    huggingface-cli login --token $HF_TOKEN --add-to-git-credential && \
+    huggingface-cli login --token $HF_TOKEN && \
     cd ../torchchat && \
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
     # Cleanup
+    unset HF_TOKEN && \
+    export HF_TOKEN="" && \
+    unset HF_TOKEN && \
+    unset HUGGING_FACE_HUB_TOKEN && \
+    export HUGGING_FACE_HUB_TOKEN="" && \
+    unset HUGGING_FACE_HUB_TOKEN && \
     huggingface-cli logout
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
