@@ -2,7 +2,6 @@
 # syntax=docker/dockerfile:1
 ARG HF_TOKEN
 
-
 # Build: 1st stage
 FROM python:3.10-slim AS builder
 ARG HF_TOKEN
