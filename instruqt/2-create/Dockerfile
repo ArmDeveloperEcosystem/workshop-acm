@@ -39,7 +39,6 @@ RUN python -m venv torch_env && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Prepare hugging face cli 
     pip install -U "huggingface_hub[cli]" && \
-    git config --global credential.helper store && \
     huggingface-cli login --token $HF_TOKEN && \
     cd ../torchchat && \
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
