@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: llmserver
-        image: <your deployed ACR name>.azurecr.io/multi-arch:latest
+        image: <your deployed ACR name>.azurecr.io/acmworkshopllm:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 5000
@@ -36,5 +36,5 @@ spec:
             cpu: 300m
             memory: 8000Mi
           limits:
-            cpu: 5000m
-            memory: 64000Mi
+            cpu: 10000m
+            memory: 128000Mi
