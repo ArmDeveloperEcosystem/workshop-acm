@@ -160,6 +160,23 @@ To complete this workshop and clean up these resources, click the **Next** butto
 
 
 
+az acr import --name armacroq00yn9bkmyl --source docker.io/avinzarlez979/acmworkshopllm:latest --image acmworkshopllm:latest
+
+az aks get-credentials --resource-group arm-aks-demo-rg-nice-elephant --name arm-aks-demo-cluster --overwrite-existing 
+
+
+python -m venv torch_env
+. torch_env/bin/activate
+git clone --recursive https://github.com/pytorch/torchchat.git
+cd torchchat
+git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6
+find . -name browser.py -exec sed -i -e "s/127\.0\.0\.1:5000/$IPADDRESS:80/" {} +
+pip3 install openai==1.45.0
+pip3 install httpx==0.27.2
+
+
+
+
 
 
 In this section, you will learn how to configure and run the chatbot server as a backend service and create a Streamlit-based frontend. This setup enables communication with the chatbot through a web interface accessible in your browser.
