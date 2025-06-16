@@ -11,9 +11,6 @@ EXPOSE 5000
 RUN apt-get update && \
     apt-get install -y gcc g++ build-essential python3-pip python3-venv git wget google-perftools
 
-ENV HF_HOME=/hfcache
-ENV TORCHCHAT_MODELDIR=/model
-
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Clone and patch pytorch/ao
@@ -38,8 +35,10 @@ RUN python -m venv torch_env && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Prepare hugging face cli 
     pip install -U "huggingface_hub[cli]" && \
-    huggingface-cli login --token $HF_TOKEN && \
-    cd ../torchchat && \
+    # Don't need to log in because HF_TOKEN is set
+    # huggingface-cli login --token $HF_TOKEN && \
+    cd ../torchchat && \  
+    find . -name server.py -exec sed -i -e "s/app\.run()/app.run(host='0.0.0.0')/" {} + && \
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
     # Cleanup
     unset HF_TOKEN && \
