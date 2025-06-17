@@ -75,5 +75,5 @@ To use this Terraform configuration, follow these steps:
 1. Destroy the infrastructure (when done):
 
     ```sh
-    terraform destroy
+    terraform destroy -var="subscription_id=$(az account show --query id --output tsv)"
     ```
