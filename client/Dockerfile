@@ -24,6 +24,4 @@ RUN python -m venv torch_env && \
 
 WORKDIR torchchat
 
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
-
-ENTRYPOINT ["bash", "-c", ". torch_env/bin/activate && cd torchchat && streamlit run browser/browser.py --server.port=8501 --server.address=0.0.0.0"]
+CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && streamlit run browser/browser.py --server.port=8501 --server.address=0.0.0.0"]
