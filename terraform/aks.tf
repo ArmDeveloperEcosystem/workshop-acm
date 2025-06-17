@@ -23,9 +23,8 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 resource "azurerm_kubernetes_cluster_node_pool" "amdcluster" {
   name                  = "amdpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s.id
-  vm_size               = "Standard_D16as_v5"
+  vm_size               = "Standard_D2as_v5"
   node_count            = var.agent_count
-  os_disk_size_gb = 64
   temporary_name_for_rotation = "amdpooltemp"
 
   tags = {
