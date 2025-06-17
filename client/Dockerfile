@@ -18,9 +18,9 @@ RUN python -m venv torch_env && \
     git clone --recursive https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
     git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6 && \
-    pip install -r requirements.txt && \
-    pip3 install openai==1.45.0 && \
-    pip3 install httpx==0.27.2 && \
+    pip install streamlit && \
+    pip install openai==1.45.0 && \
+    pip install httpx==0.27.2 && \
     BROWSER_PY_PATH=$(find . -name browser.py) && \
     sed -i'e' '1s/^/import platform\nimport os\n/' $BROWSER_PY_PATH && \
     sed -i'e' 's|"http://127\.0\.0\.1:5000/v1"|os.environ.get("TORCHCHAT_BASE_URL", "http://127.0.0.1:5000/v1")|' $BROWSER_PY_PATH && \
