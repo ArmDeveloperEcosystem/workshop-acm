@@ -42,43 +42,31 @@ You will of course also need access to an Azure subscription.
 
 Make sure can log into and get tokens for:
 
-- GitHub
 - Hugging Face
-- Docker Hub
 
-Fork workshop repo?
+### 2: Terraform Azure services
 
-### 2: Create AI application
+Deploy AKS, ACR, and VM to build image
 
-Local LLM generating a message and sending it back via API call
+### 3: Create AI application Docker image
 
-Also as part of return message, include the debugging info of if the compute happened to run on arm or x86
+Go into VM and log into Azure
 
-Mention if not test running front end?
+Build docker image and push to ACR
 
-### 3: Build multi architect docker image that contains LLM+Application
+### 4: Deploy kubernetes services
 
-Possibly some CI/CD with github actions to build
+Deploy our service on our AKS
 
-### 4: Terraform Azure services
+Test our endpoint through a load balancer
 
-Import image from docker into ACR
+Highlight that end users just hit the one load balancer endpoint, and the application will run on arm or x86. Don’t have to remove existing x86 nodes to add arm ones, and then migrate towards arm overtime instead of all at once.
 
-### 5: Import docker image
-
-Import from docker hub to deployed ACR
-
-### 6: Deploy kubernetes services
-
-Test our endpoint through a load balancer across x86 and arm based nodes
+### 5: Front End
 
 Run front end powered by kubernetes backend
 
-Highlight that end users just hit the one load balancer endpoint, and the application will run on arm or x86. 
-
-Don’t have to remove existing x86 nodes to add arm ones, and then migrate towards arm overtime instead of all at once.
-
-### 7: Demo of KubeArchInspect
+### 6: Demo of KubeArchInspect
 
 How you can use in your own Kubernetes deployments to check for arm compatibility.
 
