@@ -3,6 +3,33 @@ sudo apt-get install docker.io -y
 sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=h
 
 
+sudo docker tag acmworkshopllm:latest avinzarlez979/acmworkshopllm:latest
+sudo docker push avinzarlez979/acmworkshopllm:latest
+
+
+
+
+sudo docker images
+sudo docker run -d -p 5000:5000 <image id>
+
+
+curl http://0.0.0.0:5000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama3.1",
+    "stream": "true",
+    "max_tokens": 200,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant."
+      },
+      {
+        "role": "user",
+        "content": "Hello!"
+      }
+    ]
+  }'
 
 
 
