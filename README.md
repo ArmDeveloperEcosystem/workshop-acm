@@ -22,25 +22,23 @@ You will of course also need access to an Azure subscription.
 
 ## Challenges
 
-### 1: Prepare required services
-
-Make sure can log into and get tokens for Hugging Face.
-
-### 2: Terraform Azure services
+### 1: Terraform Azure services
 
 Deploy AKS, ACR, and a VM to build images.
 
-### 3: Create AI application Docker image
+### 2: Create AI application Docker image
+
+Make sure can log into and get tokens for Hugging Face.
 
 Build docker images and push them to our ACR
 
-### 4: Deploy kubernetes services
+### 3: Deploy kubernetes services
 
 Deploy our backend service on our AKS.
 
 Test our endpoint through a load balancer. The application will run on any node it can, x86 or arm64, but still be consume via the same common load balancer endpoint.
 
-### 5: Front End
+### 4: Front End
 
 Deploy front end service on our AKS.
 
@@ -48,7 +46,7 @@ Test our frontend is able to successfully connect to our backend.
 
 Note that our client and server are running on different architecture.
 
-### 6: Demo of KubeArchInspect
+### 5: Demo of KubeArchInspect
 
 Show how you can use this tool in your own Kubernetes deployments to check for arm compatibility.
 

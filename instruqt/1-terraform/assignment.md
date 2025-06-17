@@ -1,4 +1,17 @@
-# Deploy resources via Terraform
+# Azure Cloud Migration workshop
+
+This workshop demonstrates how to create and run a quantized LLM inference pipeline using PyTorch, then deploy the backend to the cloud using a multi-architectural Azure Kubernetes service with both AMD and Arm based nodes. You will then connect a chatbot application using Streamlit and Torchchat to the AKS load balancer, allowing for a user-friendly browser-based interface powered by PyTorch and running on a scalable Kubernetes based backend.
+
+Through instruqt you have been given:
+
+- An Azure subscription
+- A terminal to work in with the required tools (git, azure cli, terraform) already installed
+
+> [!NOTE]
+> Your Azure CLI should already be configured by Instruqt and authorized to the correct Azure subscription.
+> You can confirm this by running `az account show`
+
+## Deploy resources via Terraform
 
 In your [Terminal tab](tab-0), write the following command to prepare the current working directory for use with Terraform:
 
@@ -8,7 +21,7 @@ In your [Terminal tab](tab-0), write the following command to prepare the curren
 terraform init
 ```
 
-## Terraform Plan
+### Terraform Plan
 
 Then you can run `terraform plan` to see what we will deploy:
 
@@ -20,7 +33,7 @@ We pass in two variables to the terraform. First is the current Azure subscripti
 
 You should get output that says there are no errors and shows you everything that will be deployed when you apply.
 
-## Terraform Apply
+### Terraform Apply
 
 After successfully running `terraform plan`, let's apply our plan to deploy via terraform:
 
@@ -38,7 +51,7 @@ This will take a few minutes to run. Instruqt may give you a prompt you "Are you
 > This workshop assumes you used the instruqt generated value the random_id `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]`.
 > If you do not define the random_id variable, terraform will generate a unique string. However, you'll need to manually save the output values for later steps.
 
-## What are we deploying?
+### What are we deploying?
 ===
 
 Switch to the [Editor](tab-1) tab to take a look at our terraform files while your deployment is running:
@@ -64,6 +77,14 @@ This file configures the Azure Container Registry (ACR) resource. It defines the
 ### `aks.tf`
 
 This file sets up the Azure Kubernetes Service (AKS) resources. It defines the AKS cluster and node groups, enabling the deployment and management of containerized applications on Kubernetes.
+
+### `ssh.tf`
+
+This file sets up a SSH key for the Azure VM.
+
+### `vm.tf`
+
+This file configured an Azure VM that we can access via public network using a SSH key.
 
 ### `outputs.tf`
 

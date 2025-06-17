@@ -40,6 +40,30 @@ curl http://0.0.0.0:5000/v1/chat/completions \
 
 
 
+
+## Verify Hugging Face access to gated repos
+
+If you haven't already done this
+
+- Go to [Hugging Face Gated Repositories](https://huggingface.co/settings/gated-repos) and make sure **mistralai/Mistral-7B-Instruct-v0.2** is listed.
+- If it is not listed:
+  - Go to [https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
+  - Click the **Agree and Access Repository** button
+
+## Create and store and Access Token if you haven't already
+
+- Go to [Hugging Face Access Tokens](https://huggingface.co/settings/tokens)
+- Click the **Create new token** on the top right
+- Change **Token type** to **Read**
+- Give it any name
+- Click the **Create token** button
+- Copy the Access Token and save it somewhere safe
+
+
+
+
+
+
 # Import into Azure Container Registry
 
 Now we need to import an image of our Go application into our newly created Azure Container Registry.
