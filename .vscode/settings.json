@@ -1,5 +1,9 @@
 {
     "cSpell.words": [
-        "llmserver"
+        "llmserver",
+        "streamlit",
+        "torchchat",
+        "workshopclient",
+        "workshopllm"
     ]
 }
