@@ -24,6 +24,14 @@ This file configures the Azure Container Registry (ACR) resource. It defines the
 
 This file sets up the Azure Kubernetes Service (AKS) resources. It defines the AKS cluster and node groups, enabling the deployment and management of containerized applications on Kubernetes.
 
+### `ssh.tf`
+
+This file sets up a SSH key for the Azure VM.
+
+### `vm.tf`
+
+This file configured an Azure VM that we can access via public network using a SSH key.
+
 ### `outputs.tf`
 
 This file specifies the outputs of the Terraform project. Outputs values that are created by Terraform and can then be displayed to the user, or copied to other platforms like GitHub Actions.
@@ -55,24 +63,26 @@ To use this Terraform configuration, follow these steps:
     You can pass in the subscription ID for the subscription you'd like to deploy to.
 
     ```sh
-    terraform plan -var="subscription_id=<put your subscription ID here>"
+    terraform plan -var="subscription_id=<put your subscription ID here>"  -out tfplan
     ```
 
     If you want to do the current configured subscription, this code will automatically populate the subscription id:
 
     ```sh
-    terraform plan -var="subscription_id=$(az account show --query id --output tsv)"
+    terraform plan -var="subscription_id=$(az account show --query id --output tsv)" -out tfplan
     ```
 
 1. Apply the configuration:
 
-    Same as above, to this code will automatically populate the subscription id:
+    Using the output file `tfplan` that was defined as part of the previous step.
 
     ```sh
-    terraform apply -var="subscription_id=$(az account show --query id --output tsv)"
+    terraform apply tfplan
     ```
 
 1. Destroy the infrastructure (when done):
+
+    Same as before, to this code will automatically populate the subscription id:
 
     ```sh
     terraform destroy -var="subscription_id=$(az account show --query id --output tsv)"
