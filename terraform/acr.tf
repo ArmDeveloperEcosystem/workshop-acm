@@ -1,9 +1,3 @@
-resource "random_string" "random" {
-  length           = 12
-  special          = false
-  upper            = false
-}
-
 locals {
   acr_name = var.random_id != "" ? "${var.acr_name_prefix}${var.random_id}" : "${var.acr_name_prefix}${random_string.random.result}"
 }

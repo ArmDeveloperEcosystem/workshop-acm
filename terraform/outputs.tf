@@ -10,6 +10,10 @@ output "aks_name" {
   value = azurerm_kubernetes_cluster.k8s.name
 }
 
+output "public_ip_address" {
+  value = azurerm_linux_virtual_machine.my_terraform_vm.public_ip_address
+}
+
 output "client_certificate" {
   value     = azurerm_kubernetes_cluster.k8s.kube_config[0].client_certificate
   sensitive = true

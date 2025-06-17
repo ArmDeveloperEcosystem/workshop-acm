@@ -3,6 +3,12 @@ resource "random_pet" "rg_name" {
   prefix = var.resource_group_name_prefix
 }
 
+resource "random_string" "random" {
+  length           = 8
+  special          = false
+  upper            = false
+}
+
 locals {
   resource_group_name = var.random_id != "" ? "${var.resource_group_name_prefix}-${var.random_id}" : random_pet.rg_name.id
 }
