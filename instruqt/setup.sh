@@ -44,4 +44,4 @@ echo "Logged in using service principal. Using Azure location: $location"
 ###############################################################################
 # Clone Git repo
 ###############################################################################
-git clone https://github.com/ArmDeveloperEcosystem/workshop-multiarch-aks.git multiarch
+git clone https://github.com/ArmDeveloperEcosystem/workshop-acm.git acm
