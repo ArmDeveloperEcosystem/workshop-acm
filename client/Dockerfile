@@ -1,10 +1,11 @@
 
 # syntax=docker/dockerfile:1
-ARG HF_TOKEN
+ARG URL
 
 # Build: 1st stage
-FROM python:3.10-slim AS builder
+FROM python:3.10-slim
 EXPOSE 8501
+ENV TORCHCHAT_BASE_URL $URL
 
 # Install dependencies
 RUN apt-get update && \
@@ -21,7 +22,5 @@ RUN python -m venv torch_env && \
     pip3 install httpx==0.27.2 && \
     find . -name browser.py -exec sed -i -e '1s/^/import os\n/' {} + && \
     find . -name browser.py -exec sed -i -e 's|"http://127\.0\.0\.1:5000/v1"|os.environ.get("TORCHCHAT_BASE_URL", "http://127.0.0.1:5000/v1")|' {} +
-
-WORKDIR torchchat
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && streamlit run browser/browser.py --server.port=8501 --server.address=0.0.0.0"]

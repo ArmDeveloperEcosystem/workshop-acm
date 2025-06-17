@@ -7,6 +7,10 @@ sudo docker tag acmworkshopllm:latest avinzarlez979/acmworkshopllm:latest
 sudo docker push avinzarlez979/acmworkshopllm:latest
 
 
+sudo docker build -t acmworkshopclient .
+
+sudo docker tag acmworkshopclient:latest avinzarlez979/acmworkshopclient:latest
+sudo docker push avinzarlez979/acmworkshopclient:latest
 
 
 sudo docker images
