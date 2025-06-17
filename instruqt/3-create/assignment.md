@@ -63,7 +63,7 @@ In your [Terminal tab](tab-0), write the following command to prepare the curren
 [button label="Terminal"](tab-0)
 
 ```bash,run
-az acr import --name armacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]] --source docker.io/avinzarlez979/multi-arch:latest --image multi-arch:latest
+az acr import --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]] --source docker.io/avinzarlez979/multi-arch:latest --image multi-arch:latest
 ```
 
 This will import the public image of this Go application available at `docker.io/avinzarlez979/multi-arch:latest` into your newly created ACR.

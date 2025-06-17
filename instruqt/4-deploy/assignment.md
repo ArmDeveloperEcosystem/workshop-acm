@@ -36,11 +36,11 @@ Change line 21 of all three files from:
 to
 
 ```yaml
-        image: armacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/multi-arch:latest
+        image: workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/multi-arch:latest
 ```
 
 > [!NOTE]
-> Note the name of your deployed Azure Container Registry, if it is not the default `armacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` then edit the above line.
+> Note the name of your deployed Azure Container Registry, if it is not the default `workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` then edit the above line.
 
 Once the files are saved, we are ready to deploy our application on our AKS cluster.
 
@@ -52,11 +52,11 @@ In your [Terminal tab](tab-0), write the following command to load your AKS cred
 [button label="Terminal"](tab-0)
 
 ```bash,run
-az aks get-credentials --resource-group arm-aks-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]] --name arm-aks-demo-cluster --overwrite-existing 
+az aks get-credentials --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-aks --name workshop-aks-demo-cluster --overwrite-existing 
 ```
 
 > [!NOTE]
-> Once again if your resource group is not the default name of `arm-aks-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]`, then you will have to edit the above line to use the actual name of your deployed resource group and AKS cluster.
+> Once again if your resource group is not the default name of `workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-aks`, then you will have to edit the above line to use the actual name of your deployed resource group and AKS cluster.
 
 Deploy the service using `kubectl`
 
@@ -160,9 +160,9 @@ To complete this workshop and clean up these resources, click the **Next** butto
 
 
 
-az acr import --name armacroq00yn9bkmyl --source docker.io/avinzarlez979/acmworkshopllm:latest --image acmworkshopllm:latest
+az acr import --name workshopacroq00yn9bkmyl --source docker.io/avinzarlez979/acmworkshopllm:latest --image acmworkshopllm:latest
 
-az aks get-credentials --resource-group arm-aks-demo-rg-nice-elephant --name arm-aks-demo-cluster --overwrite-existing 
+az aks get-credentials --resource-group workshop-demo-rg-nice-elephant-aks --name workshop-aks-demo-cluster --overwrite-existing 
 
 
 python -m venv torch_env

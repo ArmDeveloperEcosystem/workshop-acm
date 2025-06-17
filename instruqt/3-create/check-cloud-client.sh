@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # Variables
 UNIQUE_ID=$(agent variable get randomid)
-ACR_NAME="armacr$UNIQUE_ID"
+ACR_NAME="workshopacr$UNIQUE_ID"
 
 for IMAGE_NAME in "acmworkshopllm" "acmworkshopclient"; do
     # Check if the image exists in the ACR

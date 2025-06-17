@@ -1,5 +1,9 @@
-output "resource_group_name" {
-  value = azurerm_resource_group.rg.name
+output "aks_resource_group_name" {
+  value = azurerm_resource_group.aksrg.name
+}
+
+output "vm_resource_group_name" {
+  value = azurerm_resource_group.vmrg.name
 }
 
 output "acr_name" {

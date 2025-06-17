@@ -13,27 +13,27 @@ variable "random_id" {
 
 # ACR variables
 variable "acr_name_prefix" {
-  default = "armacr"
+  default = "workshopacr"
   description = "Prefix of the ACR name that be will combined with a random ID."
   type        = string
 }
 
 # AKS variables
 variable "cluster_name" {
-  default = "arm-aks-demo-cluster"
+  default = "workshop-aks-demo-cluster"
   type        = string
 }
 variable "dns_prefix" {
-  default = "arm-aks"
+  default = "workshop-aks"
   type        = string
 }
 variable "agent_count" {
-  default = 2
+  default = 1
 }
 
 # Azure VM variables
 variable "vm_name" {
-  default = "arm-vm"
+  default = "workshop-vm"
   description = "Name of the VM."
   type        = string
 }
@@ -55,7 +55,7 @@ variable "resource_group_location" {
   type        = string
 }
 variable "resource_group_name_prefix" {
-  default     = "arm-aks-demo-rg"
-  description = "Prefix of the resource group name that will be combined with a random ID."
+  default     = "workshop-demo-rg"
+  description = "Prefix of the resource group names that will be combined with a random ID."
   type        = string
 }

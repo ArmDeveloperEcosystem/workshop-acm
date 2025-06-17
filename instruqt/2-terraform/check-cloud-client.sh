@@ -13,11 +13,13 @@ UNIQUE_ID=$(agent variable get randomid)
 
 # Define the expected resources from Terraform
 EXPECTED_RESOURCES=(
-    "resourceGroup:arm-aks-demo-rg-$UNIQUE_ID"
-    "aksCluster:arm-aks-demo-cluster"
-    "acr:armacr$UNIQUE_ID"
+    "resourceGroup:workshop-demo-rg-$UNIQUE_ID-aks"
+    "resourceGroup:workshop-demo-rg-$UNIQUE_ID-vm"
+    "aksCluster:workshop-aks-demo-cluster"
+    "acr:workshopacr$UNIQUE_ID"
     "nodePool:armpool"
     "nodePool:amdpool"
+    "vm:workshop-vm"
 )
 
 # Azure subscription ID
