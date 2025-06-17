@@ -1,6 +1,5 @@
 
 # syntax=docker/dockerfile:1
-ARG URL
 
 # Build: 1st stage
 FROM --platform=${BUILDPLATFORM} python:3.10-slim AS builder
@@ -16,14 +15,12 @@ RUN git clone  https://github.com/pytorch/torchchat.git && \
     sed -i'e' 's|127\.0\.0\.1:5000|"+os.environ.get("TORCHCHAT_BASE_URL", "127.0.0.1:5000")+"|' browser/browser.py
 
 # Release: 2nd stage
-FROM --platform=${BUILDPLATFORM} python:3.10-slim
+FROM python:3.10-slim
 EXPOSE 8501
-ARG URL
-ENV TORCHCHAT_BASE_URL=$URL
 
 # Install dependencies
 RUN apt-get update && \
-    apt-get install -y python3-pip python3-venv git
+    apt-get install -y python3-pip python3-venv
 
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
