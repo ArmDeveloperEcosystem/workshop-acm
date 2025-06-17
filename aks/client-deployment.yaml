@@ -19,18 +19,10 @@ spec:
       containers:
       - name: client
         image: <your deployed ACR name>.azurecr.io/acmworkshopclient:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 8501
         env:
-          - name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
           - name: TORCHCHAT_BASE_URL
             value: <server.url:port>
         resources:
@@ -38,5 +30,5 @@ spec:
             cpu: 100m
             memory: 128Mi
           limits:
-            cpu: 500m
+            cpu: 300m
             memory: 512Mi

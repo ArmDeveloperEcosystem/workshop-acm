@@ -6,8 +6,10 @@ sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=h
 sudo docker tag acmworkshopllm:latest avinzarlez979/acmworkshopllm:latest
 sudo docker push avinzarlez979/acmworkshopllm:latest
 
+sudo docker buildx build --platform linux/amd64,linux/arm64 -t acmworkshopclient .
 
-sudo docker build -t acmworkshopclient .
+
+docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag avinzarlez979/acmworkshopclient:latest .
 
 sudo docker tag acmworkshopclient:latest avinzarlez979/acmworkshopclient:latest
 sudo docker push avinzarlez979/acmworkshopclient:latest
