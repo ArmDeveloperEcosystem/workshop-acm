@@ -20,7 +20,8 @@ RUN python -m venv torch_env && \
     pip install -r requirements.txt && \
     pip3 install openai==1.45.0 && \
     pip3 install httpx==0.27.2 && \
-    find . -name browser.py -exec sed -i -e '1s/^/import os\n/' {} + && \
-    find . -name browser.py -exec sed -i -e 's|"http://127\.0\.0\.1:5000/v1"|os.environ.get("TORCHCHAT_BASE_URL", "http://127.0.0.1:5000/v1")|' {} +
+    find . -name browser.py -exec sed -i'e' '1s/^/import platform\nimport os\n/' {} + && \
+    find . -name browser.py -exec sed -i'e' 's|"http://127\.0\.0\.1:5000/v1"|os.environ.get("TORCHCHAT_BASE_URL", "http://127.0.0.1:5000/v1")|' {} + && \
+    find . -name browser.py -exec perl -i -p0e 's|status\.update\((?:.\|\n)*?start\)|env_node = os.environ.get("NODE_NAME")\n            env_pod  = os.environ.get("POD_NAME")\n            env_platform = platform.processor()\n            status.update(\n                label="Done, averaged {:.2f} tokens\/second running on {} \/ {} \/ {}".format(\n                    tokcount \/ (time.time() - start), env_node, env_pod, env_platform|' {} +
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && streamlit run browser/browser.py --server.port=8501 --server.address=0.0.0.0"]
