@@ -7,10 +7,13 @@ FROM python:3.10-slim AS builder
 ARG HF_TOKEN
 EXPOSE 5000
 
-# Install dependencies
+# Install dependencies and update packages to fix vulnerabilities
 RUN apt-get update && \
-    apt-get install -y gcc g++ build-essential python3-pip python3-venv git wget google-perftools
-
+    apt-get upgrade -y && \
+    apt-get install -y gcc g++ build-essential python3-pip python3-venv git wget google-perftools && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Clone and patch pytorch/ao

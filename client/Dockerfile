@@ -4,9 +4,12 @@
 # Build: 1st stage
 FROM --platform=${BUILDPLATFORM} python:3.10-slim AS builder
 
-# Install dependencies
+# Install dependencies and update packages to fix vulnerabilities
 RUN apt-get update && \
-    apt-get install -y git
+    apt-get upgrade -y && \
+    apt-get install -y git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN git clone  https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
@@ -18,9 +21,12 @@ RUN git clone  https://github.com/pytorch/torchchat.git && \
 FROM python:3.10-slim
 EXPOSE 8501
 
-# Install dependencies
+# Install dependencies and update packages to fix vulnerabilities
 RUN apt-get update && \
-    apt-get install -y python3-pip python3-venv
+    apt-get upgrade -y && \
+    apt-get install -y python3-pip python3-venv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
