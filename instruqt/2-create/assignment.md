@@ -126,7 +126,7 @@ Navigate to the client folder:
 cd ../client
 ```
 
-We can build for both amd64 and arm64 and push the repo in one step:
+We can build for both `amd64` and `arm64` and push the repo in one step:
 
 ```bash,run
 # TODO: Confirm this works

@@ -5,7 +5,7 @@
 **What you’ll build:**
 
 - A containerized LLM application
-- An AKS cluster with both Arm64 and x86 nodes
+- An AKS cluster with both `arm64` and `amd64` nodes
 - Deploy container images
 
 **What you’ll learn:**

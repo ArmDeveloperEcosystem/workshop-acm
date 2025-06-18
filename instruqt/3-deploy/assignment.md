@@ -9,21 +9,32 @@ In the [Editor](tab-1) tab, let's look through the various yaml files we will be
 
 [button label="Editor"](tab-1)
 
-### hello-service.yaml
+### Services
 
-This is creates a service in kubernetes with an external facing IP address, that will direct traffic to our "hello" application we will deploy across various nodes.
+`llmserver-service.yaml` and `client-service.yaml` create our services in kubernetes. These set up load balancers with an external facing IP address that will direct traffic to our application, regardless of what node it is deployed on.
 
-### deployment yaml
+`llmserver-service` is for the back end, with a public IP address for our testing purposes. However, in a real world situation, we would only need a public IP on our `client-service`.
 
-There are three deployment files:
+These two services are nearly identical, but target different applications.
 
-- `arm64-deployment.yaml`
-- `amd64-deployment.yaml`
-- `multi-arch-deployment.yaml`
+### Deployments
 
-All three of these files are very similar. They deploy our application from the image we imported into ACR. However, they are different in one key way.
+There are two deployment files, one for our server (`llmserver-deployment.yaml`) and one for our client (`client-deployment.yaml`)
 
-`multi-arch-deployment.yaml` deploys the application to run on whatever node is available. However `arm64-deployment.yaml` and `amd64-deployment.yaml` implement an additional two lines of yaml called a `nodeSelector`, that only allows our application to run on either `arm64` or `amd64` based nodes respectively.
+Once again these two deployments are similar. They both deploy our application from the image we imported into ACR. However, besides targetting different containers, they are different in a couple key ways:
+
+#### Node selector
+
+Each has a `nodeSelector` targeting a different platform.
+
+We optimized our LLM server for `arm64`, so we want our application to only run on arm based compute.
+
+However, we built our front end client to run on either `amd64` or `arm64`. Because it is cross platform, it can run on both loads and our `client-service` will automatically direct traffic.
+
+For example purposes, we have chosen our client to be only on `amd64`
+
+
+`multi-arch-deployment.yaml` deploys the application to run on whatever node is available. However `arm64-deployment.yaml` and `amd64-deployment.yaml` implement an additional two lines of yaml called a , that only allows our application to run on either `arm64` or `amd64` based nodes respectively.
 
 In each file, we will need to update it to point to our ACR we were using in the previous steps.
 
@@ -64,7 +75,7 @@ Deploy the service using `kubectl`
 kubectl apply -f hello-service.yaml
 ```
 
-Now that our service is running, let's deploy our application. At first, let's deploy only the version that runs on arm64 based devices:
+Now that our service is running, let's deploy our application. At first, let's deploy only the version that runs on `arm64` based devices:
 
 ```bash,run
 kubectl apply -f arm64-deployment.yaml
@@ -98,13 +109,13 @@ You should get a reply from that service that confirms the Go application is run
 ## Deploy multi-architectural workloads
 ===
 
-Now it's time to deploy the amd64 version of the application:
+Now it's time to deploy the `amd64` version of the application:
 
 ```bash,run
 kubectl apply -f amd64-deployment.yaml
 ```
 
-You can now see you have pods for both the arm64 and amd64 deployments.
+You can now see you have pods for both the `arm64` and `amd64` deployments.
 
 ```bash,run
 kubectl get pods
@@ -121,7 +132,7 @@ curl -w '\n' $IPADDRESS
 > [!NOTE]
 > Remember you can run `kubectl get svc` to get the external IP address of your service.
 
-Do this a couple of times, and you should see two different kinds of responses. Showing the Go application is running sometimes on amd64 and other times on arm64 based nodes.
+Do this a couple of times, and you should see two different kinds of responses. Showing the Go application is running sometimes on `amd64` and other times on `arm64` based nodes.
 
 Let's add a third deployment without the architecture restrictions:
 
@@ -129,9 +140,9 @@ Let's add a third deployment without the architecture restrictions:
 kubectl apply -f multi-arch-deployment.yaml
 ```
 
-Since our docker image has both an amd64 and arm64 version, it is compatible with all our nodes.
+Since our docker image has both an `amd64` and `arm64` version, it is compatible with all our nodes.
 
-You can now see you have three pods for both the arm64, amd64 and multi architectural deployments.
+You can now see you have three pods for both the `arm64`, `amd64` and multi architectural deployments.
 
 ```bash,run
 kubectl get pods
