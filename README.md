@@ -36,7 +36,7 @@ Build docker images and push them to our ACR
 
 Deploy our backend service on our AKS.
 
-Test our endpoint through a load balancer. The application will run on any node it can, x86 or arm64, but still be consume via the same common load balancer endpoint.
+Test our endpoint through a load balancer. The application will run on any node it can, `amd64` or `arm64`, but still be consume via the same common load balancer endpoint.
 
 ### 4: Front End
 
@@ -52,6 +52,6 @@ Show how you can use this tool in your own Kubernetes deployments to check for a
 
 ## Conclusion
 
-You don’t have to remove existing x86 nodes to add arm ones using multi architectural deployments. That way you can migrate towards arm64 on your pace, instead of all at once.
+You don’t have to remove existing x86 nodes to add arm ones using multi architectural deployments. That way you can migrate towards `arm64` on your pace, instead of all at once.
 
 You have successfully created and deployed this example project. Let us know if there was useful for you, or if there are other workshops you'd like to see from us in the future.
