@@ -1,10 +1,16 @@
 {
     "cSpell.words": [
+        "acmworkshopclient",
+        "acmworkshopllm",
         "Instruqt",
         "llmserver",
+        "mistralai",
         "randomid",
         "streamlit",
+        "torchao",
         "torchchat",
+        "urandom",
+        "workshopacr",
         "workshopclient",
         "workshopllm"
     ]
