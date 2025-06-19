@@ -89,3 +89,5 @@ This file configured an Azure VM that we can access via public network using a S
 ### `outputs.tf`
 
 This file specifies the outputs of the Terraform project. Outputs values that are created by Terraform and can then be displayed to the user, or copied to other platforms like GitHub Actions.
+
+When the terraform finishes deploying, click the **Next** button below.

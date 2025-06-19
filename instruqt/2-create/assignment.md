@@ -155,19 +155,12 @@ We start by cloning the torchao and torchchat repositories and then applying the
 
 Finally we will download the [Mistral AI's 7B Instruct v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) model and quantize it to int 4-bit using Kernels for PyTorch. By using channel-wise quantization, the weights are quantized independently across different channels, or groups of channels. This can improve accuracy over simpler quantization methods.
 
+## Cleanup
 
+When both images are pushed to the ACR, shut down your virtual machine to reduce resource spend:
 
+```bash,run
+# TODO: Write some code to shut down virtual machine.
+```
 
-
-
-
-
-
-
-
-
-TODO: Do I need this?
-
-In your [Terminal tab](tab-0), write the following command to prepare the current working directory for use with Terraform:
-
-[button label="Terminal"](tab-0)
+Then click the **Next** button below.
