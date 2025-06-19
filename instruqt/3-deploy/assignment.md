@@ -222,10 +222,11 @@ kubectl get svc
 
 ## Access the Streamlit frontend in your browser
 
-To confirm the external IP address of our `client-service`, you can run the following command:
+To confirm the external IP address of our `client-service`, run the following command:
 
 ```bash,run
-kubectl get services client-service --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+export CLIENT_IP=$(kubectl get services client-service --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo $CLIENT_IP
 ```
 
 Open a new browser tab and go to `http://<EXTERNAL IP ADDRESS OF YOUR CLIENT-SERVICE>`

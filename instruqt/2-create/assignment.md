@@ -24,6 +24,8 @@ sudo apt-get install docker.io -y
 Clone our example code repo:
 
 ```bash,run
+# TODO: Change this to curl to just get the two files we need:
+# TODO: curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/kubearchinspect/refs/heads/main/SECURITY.md --create-dirs -o pizza/Dockerfile 
 git clone https://github.com/ArmDeveloperEcosystem/workshop-acm.git acm
 cd acm
 ```
