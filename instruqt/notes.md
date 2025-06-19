@@ -12,7 +12,7 @@
 
 - How to use Docker, PyTorch, Hugging Face, Terraform, Azure Kubernetes Service (AKS), Azure Container Registry (ACR) to build, test, and deploy services.
 - Prepare a simple LLM-based application for use at scale with torchchat.
-- Build and run multi-architecture containerized applications.
+- Build and run multi-architectural containerized applications.
 - Why running Arm-based nodes matters for improved performance and reduced cost.
 - How to migrate and test x86 workloads on Arm.
 - Best practices for building and deploying applications at scale.
