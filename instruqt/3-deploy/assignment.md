@@ -1,19 +1,21 @@
-# Deploy workload into AKS
+# Deploy backend workload into AKS
 
 Now that we have all the pieces in place, it's time to deploy and run our application itself using kuberneters.
-
-## Update yaml deployment file
-===
 
 In the [Editor](tab-1) tab, let's look through the various yaml files we will be using today:
 
 [button label="Editor"](tab-1)
 
+## File Explanation
+===
+
+Let's walk through the `yaml` files we will be using today
+
 ### Services
 
-`llmserver-service.yaml` and `client-service.yaml` create our services in kubernetes. These set up load balancers with an external facing IP address that will direct traffic to our application, regardless of what node it is deployed on.
+`llmserver-service.yaml` and `client-service.yaml` create our services in kubernetes. These set up load balancers with an external facing IP address that will direct traffic to our applications, regardless of what nodes those deployments are running on.
 
-`llmserver-service` is for the back end, with a public IP address for our testing purposes. However, in a real world situation, we would only need a public IP on our `client-service`.
+`llmserver-service` allows us to connect to our backend server, with a public IP address for our testing purposes. In a real world situation, we would only need a public IP on our `client-service`. However, for ease of testing, both services create a public IP address.
 
 These two services are nearly identical, but target different applications.
 
@@ -21,42 +23,36 @@ These two services are nearly identical, but target different applications.
 
 There are two deployment files, one for our server (`llmserver-deployment.yaml`) and one for our client (`client-deployment.yaml`)
 
-Once again these two deployments are similar. They both deploy our application from the image we imported into ACR. However, besides targetting different containers, they are different in a couple key ways:
+Once again these two deployments are similar. The `yaml` files define the resource requirements and which image we want to deploy from our ACR. However, besides targeting different container images, they are different in a couple key ways.
 
-#### Node selector
+Each has a `nodeSelector` targeting a different platform. We optimized our LLM server for `arm64`, so we want our application to only run on arm based compute. However, we built our frontend client to run on either `amd64` or `arm64`. Because it is cross platform, it can run on all of our nodes and our `client-service` will automatically direct traffic completely invisibly to the end user.
 
-Each has a `nodeSelector` targeting a different platform.
+For example purposes today, we have chosen our client to be only run `amd64`. This is to demonstrate that in a truly multi-architectural kubernetes system, what matters is the applications and their relationship to each other. As long as containers are built for any platform, they will not only work but talk to other aspects of the deployment regardless of their architecture. If we wanted frontend client to run on either `amd64` or `arm64` workloads, all we have to do is remove the `nodeSelector` from the yaml file. This is a great example of how you can implement new architecture into your existing workloads without having to take existing services down. Then gradually change the available of your nodes as you optimize for cost and scale.
 
-We optimized our LLM server for `arm64`, so we want our application to only run on arm based compute.
+In each file, we will need to update the image URL to our ACR we pushed to in the previous section.
 
-However, we built our front end client to run on either `amd64` or `arm64`. Because it is cross platform, it can run on both loads and our `client-service` will automatically direct traffic.
+In the `client-deployment.yaml` file, we will also need to set the environment variable to the `llmserver-service` IP address.
 
-For example purposes, we have chosen our client to be only on `amd64`
+## Update `llmserver-deployment.yaml`
 
-
-`multi-arch-deployment.yaml` deploys the application to run on whatever node is available. However `arm64-deployment.yaml` and `amd64-deployment.yaml` implement an additional two lines of yaml called a , that only allows our application to run on either `arm64` or `amd64` based nodes respectively.
-
-In each file, we will need to update it to point to our ACR we were using in the previous steps.
-
-Change line 21 of all three files from:
+On line 21, change this:
 
 ```yaml
-        image: <your deployed ACR name>.azurecr.io/multi-arch:latest
+        image: <your deployed ACR name>.azurecr.io/acmworkshopllm:latest
 ```
 
 to
 
 ```yaml
-        image: workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/multi-arch:latest
+        image: workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 ```
 
 > [!NOTE]
 > Note the name of your deployed Azure Container Registry, if it is not the default `workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` then edit the above line.
 
-Once the files are saved, we are ready to deploy our application on our AKS cluster.
+Make sure the file is saved. Once you have done so, we are ready to deploy.
 
-## Deploy initial AKS workload
-===
+## Deploy backend server
 
 In your [Terminal tab](tab-0), write the following command to load your AKS credentials into your local kubernetes:
 
@@ -67,27 +63,41 @@ az aks get-credentials --resource-group workshop-demo-rg-[[ Instruqt-Var key="ra
 ```
 
 > [!NOTE]
-> Once again if your resource group is not the default name of `workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-aks`, then you will have to edit the above line to use the actual name of your deployed resource group and AKS cluster.
+> Once again noting that if your resource group is not the default name of `workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-aks`, then you will have to edit the above line to use the actual name of your deployed resource group and AKS cluster.
 
 Deploy the service using `kubectl`
 
 ```bash,run
-kubectl apply -f hello-service.yaml
+kubectl apply -f llmserver-service.yaml
 ```
 
-Now that our service is running, let's deploy our application. At first, let's deploy only the version that runs on `arm64` based devices:
+Now that our service is running, let's deploy our backend server:
 
 ```bash,run
-kubectl apply -f arm64-deployment.yaml
+kubectl apply -f llmserver-deployment.yaml
 ```
 
-You can check your deploy service with:
+> [!NOTE]
+> Ensure you only deploying `llmserver-service` and `llmserver`, not the client ones! We will do that later.
+
+### Test backend server
+===
+
+Let's check on our deployment by looking at our pods:
+
+```bash,run
+kubectl get pods
+```
+
+You should see two pods running the same server application. Your load balancer will automatically assign a response from one upon getting a request.
+
+It may take a minute for the container to become running. In the mean time you can check if your service is ready with:
 
 ```bash,run
 kubectl get svc
 ```
 
-You should see the hello-service we deployed, along with an external facing IP address.
+You should see the llmserver-service we deployed, along with an external facing IP address.
 
 > [!IMPORTANT]
 > If you still see a `pending` value for the external IP address, wait a moment and try again.
@@ -95,72 +105,35 @@ You should see the hello-service we deployed, along with an external facing IP a
 Once an external IP addressed is assigned, let's save that value to a variable:
 
 ```bash,run
-export IPADDRESS=$(kubectl get services hello-service --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export SERVER_IP=$(kubectl get services llmserver-service --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-Then send a ping using curl:
+Try it out by sending a ping using curl:
 
 ```bash,run
-curl -w '\n' $IPADDRESS
+curl http://$SERVER_IP/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama3.1",
+    "stream": "true",
+    "max_tokens": 200,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant."
+      },
+      {
+        "role": "user",
+        "content": "Hello!"
+      }
+    ]
+  }'
 ```
 
-You should get a reply from that service that confirms the Go application is running, and which architecture the application is running on.
+You should get a series of json messages as a response.
 
-## Deploy multi-architectural workloads
-===
-
-Now it's time to deploy the `amd64` version of the application:
-
-```bash,run
-kubectl apply -f amd64-deployment.yaml
-```
-
-You can now see you have pods for both the `arm64` and `amd64` deployments.
-
-```bash,run
-kubectl get pods
-```
-
-Note that these are running the same application, and your load balancer will automatically assign a response from one upon request.
-
-You can test this by sending more pings to the service:
-
-```bash,run
-curl -w '\n' $IPADDRESS
-```
-
-> [!NOTE]
-> Remember you can run `kubectl get svc` to get the external IP address of your service.
-
-Do this a couple of times, and you should see two different kinds of responses. Showing the Go application is running sometimes on `amd64` and other times on `arm64` based nodes.
-
-Let's add a third deployment without the architecture restrictions:
-
-```bash,run
-kubectl apply -f multi-arch-deployment.yaml
-```
-
-Since our docker image has both an `amd64` and `arm64` version, it is compatible with all our nodes.
-
-You can now see you have three pods for both the `arm64`, `amd64` and multi architectural deployments.
-
-```bash,run
-kubectl get pods
-```
-
-Let's run a little script to ping the service repeatedly. Insert the external IP address of your service into this line of code and run it:
-
-```bash,run
-for i in $(seq 1 20); do curl -w '\n' $IPADDRESS; done
-```
-
-You will now get a variety of messages back. Some will be from the application deployments that we assigned to run on amd or arm. Others will be on the multi architectural deployment that could be running on both amd and arm based compute.
-
-The load balance will automatically direct traffic to your various pods that is completely invisible to your end user.
-
-This is a great example of how you can implement new architecture into your existing workloads without having to take existing services down. Then gradually change the available of your nodes as you optimize for cost and scale.
-
-To complete this workshop and clean up these resources, click the **Next** button below.
+> [!IMPORTANT]
+> If you don't get a response, do another `kubectl get pods` and ensure at least one deployment is in a `running` state.
 
 
 
@@ -171,127 +144,10 @@ To complete this workshop and clean up these resources, click the **Next** butto
 
 
 
-az acr import --name workshopacroq00yn9bkmyl --source docker.io/avinzarlez979/acmworkshopllm:latest --image acmworkshopllm:latest
-
-az aks get-credentials --resource-group workshop-demo-rg-nice-elephant-aks --name workshop-aks-demo-cluster --overwrite-existing 
-
-
-python -m venv torch_env
-. torch_env/bin/activate
-git clone --recursive https://github.com/pytorch/torchchat.git
-cd torchchat
-git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6
-find . -name browser.py -exec sed -i -e "s/127\.0\.0\.1:5000/$IPADDRESS:80/" {} +
-pip3 install openai==1.45.0
-pip3 install httpx==0.27.2
 
 
 
 
-
-
-In this section, you will learn how to configure and run the chatbot server as a backend service and create a Streamlit-based frontend. This setup enables communication with the chatbot through a web interface accessible in your browser.
-
-## Activate the Virtual Environment to install dependencies
-===
-First, connect back to your Arm instance
-```bash,run
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" -L 0.0.0.0:8501:localhost:8501 ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]]
-```
-
-Then, re-activate the Python virtual environment you have used in the previous section
-```bash,run
-source torch_env/bin/activate
-```
-
-### Install Additional Tools
-Install the additional packages:
-
-```bash,run
-pip3 install openai==1.45.0
-pip3 install httpx==0.27.2
-```
-**Choose the next step based on which model you're using**
-## Running LLM Inference Backend Server (Llama 3.1)
-===
-Change to the **Terminal 2** tab on the top, or click here [button label="Terminal 2"](tab-1), and connect back to the instance and activate the virtual environment
-```bash,run
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]]
-```
-
-```bash,run
-source torch_env/bin/activate
-```
-
-```bash,run
-cd torchchat
-LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server llama3.1 --dso-path exportedModels/llama3.1.so
-```
-
-The output while the backend server starts looks like this:
-
-```output
-Using device=cpu
-Loading model...
-Time to load model: 0.13 seconds
------------------------------------------------------------
- * Serving Flask app 'server'
- * Debug mode: off
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
-```
-
-## Running LLM Inference Backend Server (Mistral)
-===
-Change to the **Terminal 2** tab on the top, or click here [button label="Terminal 2"](tab-1), and connect back to the instance and activate the virtual environment
-```bash,run
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]]
-```
-
-```bash,run
-source torch_env/bin/activate
-```
-
-```bash,run
-cd torchchat
-LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so
-```
-
-The output while the backend server starts looks like this:
-
-```output
-Using device=cpu
-Loading model...
-Time to load model: 0.13 seconds
------------------------------------------------------------
- * Serving Flask app 'server'
- * Debug mode: off
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
-```
-
-## Running Streamlit frontend server
-===
-Switch back to the **Terminal 1** tab, or click here [button label="Terminal 1"](tab-0)
-
-```bash,run
-cd torchchat
-streamlit run browser/browser.py
-```
-
-The output while the streamlit frontend server starts looks like this:
-
-```output
-Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
-
-  You can now view your Streamlit app in your browser.
-
-  Local URL: http://localhost:8501
-  Network URL: http://10.0.2.29:8501
-  External URL: http://3.86.224.131:8501
-```
 
 ## Accessing the Streamlit frontend in the browser
 ===

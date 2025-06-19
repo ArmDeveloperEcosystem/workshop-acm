@@ -32,21 +32,17 @@ Make sure can log into and get tokens for Hugging Face.
 
 Build docker images and push them to our ACR
 
-### 3: Deploy kubernetes services
+### 3: Deploy into kubernetes
 
-Deploy our backend service on our AKS.
+Deploy our backend llm service on our AKS.
 
-Test our endpoint through a load balancer. The application will run on any node it can, `amd64` or `arm64`, but still be consume via the same common load balancer endpoint.
+Test our endpoint through a load balancer. The application will run on any node it can but still be consume via the same common load balancer endpoint.
 
-### 4: Front End
+Deploy our frontend client service on our AKS.
 
-Deploy front end service on our AKS.
+Test our frontend is able to successfully connect to our backend. Note that our client and server are running on different architecture.
 
-Test our frontend is able to successfully connect to our backend.
-
-Note that our client and server are running on different architecture.
-
-### 5: Demo of KubeArchInspect
+### 4: Demo of KubeArchInspect
 
 Show how you can use this tool in your own Kubernetes deployments to check for arm compatibility.
 
