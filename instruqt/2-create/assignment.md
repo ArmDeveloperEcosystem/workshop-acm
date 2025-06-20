@@ -25,8 +25,8 @@ sh ./get-docker.sh
 Download the docker files we need for our project:
 
 ```bash,run
-curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/client/Dockerfile --create-dirs -o client/Dockerfile 
-curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/server/Dockerfile --create-dirs -o server/Dockerfile 
+curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
+curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
 ```
 
 ### Log into Azure
@@ -160,7 +160,7 @@ Switch to the [Editor](tab-1) tab to take a look the application we will run tod
 
 [button label="Editor"](tab-1)
 
-The files we are interested in are in the `acm/server` and `acm/client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
+The files we are interested in are in the `server` and `client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
 
 Torchchat is a library developed by the PyTorch team that facilitates running large language models (LLMs) seamlessly on a variety of devices. TorchAO (Torch Architecture Optimization) is a PyTorch library designed for enhancing the performance of ML models through different quantization and sparsity methods.
 
