@@ -1,14 +1,27 @@
-# Build LLM Application and push to Azure Container Registry
+# Build LLM Application and push to Azu∂e Container Registry
 
 Now we need to ssh into our newly created virtual machine (VM), build our LLM application frontend and backend containers, and push those containers to our Azure Container Registry (ACR)
 
 ## Prepare our environment
 
-Connect to our Azure Virtual machine we just created:
+Set the file permissions for our private key and get our VM's public ip address
 
 ```bash,run
-# TODO: Script to connect to Azure VM
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]] ARM_CLIENT_ID=$ARM_CLIENT_ID ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET ARM_TENANT_ID=$ARM_TENANT_ID bash -l
+chmod 400 private_key.pem 
+export SERVER_IP=$(az vm show -d -g workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm -n workshop-vm --query publicIps -o tsv)
+```
+
+Log into our ACR and pass the token to the virtual machine:
+
+```bash,run
+az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]] --expose-token --output tsv --query accessToken > acr_token.txt
+scp -i private_key.pem acr_token.txt azureadmin@172.206.192.89:~/acr_token.txt
+```
+
+Connect to our VM via SSH:
+
+```bash,run
+ssh -i private_key.pem azureadmin@$SERVER_IP
 ```
 
 ### Install dependencies
@@ -16,31 +29,26 @@ ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ I
 Ensure we have docker installed:
 
 ```bash,run
-# TODO: Confirm these requirements
 sudo apt-get update
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh ./get-docker.sh
 ```
+
+### Log into Azure
+
+We have to log into our Azure container registry:
+
+```bash,run
+docker login myregistry.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin <<< $(cat acr_token.txt)
+```
+
+### Download Docker Files
 
 Download the docker files we need for our project:
 
 ```bash,run
 curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
 curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
-```
-
-### Log into Azure
-
-We have to log into our Azure environment again
-
-```bash,run
-az login --service-principal --username "$ARM_CLIENT_ID" --password "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" --output none; 
-```
-
-Now authenticate our environment to push to Docker
-
-```bash,run
-az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]
 ```
 
 ### Verify Hugging Face access to gated repos
