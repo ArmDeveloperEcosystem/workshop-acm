@@ -40,7 +40,7 @@ az login --service-principal --username "$ARM_CLIENT_ID" --password "$ARM_CLIENT
 Now authenticate our environment to push to Docker
 
 ```bash,run
-az acr login --name myregistry
+az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]
 ```
 
 ### Verify Hugging Face access to gated repos
