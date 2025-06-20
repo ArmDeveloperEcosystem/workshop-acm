@@ -14,11 +14,11 @@ locals {
 }
 
 resource "azurerm_resource_group" "aksrg" {
-  location = "${var.resource_group_location}-aks"
-  name     = local.resource_group_name
+  location = var.resource_group_location
+  name     = "${local.resource_group_name}-aks"
 }
 
 resource "azurerm_resource_group" "vmrg" {
-  location = "${var.resource_group_location}-vm"
-  name     = local.resource_group_name
+  location = var.resource_group_location
+  name     = "${local.resource_group_name}-vm"
 }
