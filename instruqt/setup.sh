@@ -27,12 +27,6 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashi
 apt update && apt install terraform
 
 ###############################################################################
-# Install docker
-###############################################################################
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh ./get-docker.sh
-
-###############################################################################
 # Login using service principal credentials.
 ###############################################################################
 until az login --service-principal --username "$ARM_CLIENT_ID" --password "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" --output none; do

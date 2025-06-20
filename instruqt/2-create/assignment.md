@@ -8,7 +8,7 @@ Connect to our Azure Virtual machine we just created:
 
 ```bash,run
 # TODO: Script to connect to Azure VM
-ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]]
+ssh -i "[[ Instruqt-Var key="PEM_KEY" hostname="cloud-container" ]]" ubuntu@[[ Instruqt-Var key="EXTERNAL_IP" hostname="cloud-container" ]] ARM_CLIENT_ID=$ARM_CLIENT_ID ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET ARM_TENANT_ID=$ARM_TENANT_ID bash -l
 ```
 
 ### Install dependencies
@@ -18,16 +18,29 @@ Ensure we have docker installed:
 ```bash,run
 # TODO: Confirm these requirements
 sudo apt-get update
-sudo apt-get install docker.io -y
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh ./get-docker.sh
 ```
 
-Clone our example code repo:
+Download the docker files we need for our project:
 
 ```bash,run
-# TODO: Change this to curl to just get the two files we need:
-# TODO: curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/kubearchinspect/refs/heads/main/SECURITY.md --create-dirs -o pizza/Dockerfile 
-git clone https://github.com/ArmDeveloperEcosystem/workshop-acm.git acm
-cd acm
+curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/client/Dockerfile --create-dirs -o client/Dockerfile 
+curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/server/Dockerfile --create-dirs -o server/Dockerfile 
+```
+
+### Log into Azure
+
+We have to log into our Azure environment again
+
+```bash,run
+az login --service-principal --username "$ARM_CLIENT_ID" --password "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" --output none; 
+```
+
+Now authenticate our environment to push to Docker
+
+```bash,run
+az acr login --name myregistry
 ```
 
 ### Verify Hugging Face access to gated repos
@@ -57,7 +70,6 @@ Now we are ready to create the `acmworkshopllm` image, that contains our backend
 Go to our backend server application folder:
 
 ```bash,run
-# You should already be in the repo directory
 cd server
 ```
 
@@ -112,9 +124,8 @@ You should get a series of json messages as a response.
 Now push the image we just created to our Azure Container Registry (ACR), so that it can be deployed on our Azure Kubernetes Service (AKS):
 
 ```bash,run
-# TODO: Change this to the user's ACR
-sudo docker tag acmworkshopllm:latest avinzarlez979/acmworkshopllm:latest
-sudo docker push avinzarlez979/acmworkshopllm:latest
+sudo docker tag acmworkshopllm:latest workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
+sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 ```
 
 > [!NOTE]
@@ -136,7 +147,7 @@ We can build for both `amd64` and `arm64` and push the repo in one step:
 # TODO: sudo docker buildx build --platform linux/amd64,linux/arm64 -t acmworkshopclient .
 # TODO: sudo docker tag acmworkshopclient:latest avinzarlez979/acmworkshopclient:latest
 # TODO: sudo docker push avinzarlez979/acmworkshopclient:latest
-docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag avinzarlez979/acmworkshopclient:latest -t acmworkshopclient .
+docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest -t acmworkshopclient .
 ```
 
 > [!NOTE]
@@ -159,10 +170,18 @@ Finally we will download the [Mistral AI's 7B Instruct v0.2](https://huggingface
 
 ## Cleanup
 
-When both images are pushed to the ACR, shut down your virtual machine to reduce resource spend:
+When both images are pushed to the ACR, let's shut down your virtual machine to reduce resource spend.
+
+First we need to exit out of our virtual machine:
 
 ```bash,run
-# TODO: Write some code to shut down virtual machine.
+exit
+```
+
+Now shut down the virtual machine. We can always restart it if needed:
+
+```bash,run
+az vm stop --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm
 ```
 
 Then click the **Next** button below.
