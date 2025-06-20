@@ -18,7 +18,7 @@ resource "azurerm_resource_group" "aksrg" {
   name     = local.resource_group_name
 }
 
-resource "azurerm_resource_group" "aksrg" {
+resource "azurerm_resource_group" "vmrg" {
   location = "${var.resource_group_location}-vm"
   name     = local.resource_group_name
 }
