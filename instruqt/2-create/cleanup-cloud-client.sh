@@ -1,4 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-# TODO: Implement the cleanup script to shut down the VM if it is still running
+UNIQUE_ID=$(agent variable get randomid)
+
+# Stop the VM
+az vm stop --name workshop-vm --resource-group workshop-demo-rg-$UNIQUE_ID-vm
