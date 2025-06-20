@@ -19,7 +19,7 @@ resource "azurerm_public_ip" "my_terraform_public_ip" {
   name                = "myPublicIP"
   location            = azurerm_resource_group.vmrg.location
   resource_group_name = azurerm_resource_group.vmrg.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 }
 
 # Create Network Security Group and rule
