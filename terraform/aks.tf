@@ -9,7 +9,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   }
   default_node_pool {
     name       = "armpool"
-    vm_size    = "Standard_E4ps_v6"
+    vm_size    = "Standard_D8ps_v6"
     node_count = var.agent_count
     os_disk_size_gb = 64
     temporary_name_for_rotation = "armpooltemp"
