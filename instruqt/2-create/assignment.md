@@ -15,13 +15,13 @@ Log into our ACR and pass the token to the virtual machine:
 
 ```bash,run
 az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]] --expose-token --output tsv --query accessToken > acr_token.txt
-scp -i private_key.pem acr_token.txt azureadmin@172.206.192.89:~/acr_token.txt
+scp -i private_key.pem acr_token.txt "azureadmin@$SERVER_IP":~/acr_token.txt
 ```
 
 Connect to our VM via SSH:
 
 ```bash,run
-ssh -i private_key.pem azureadmin@$SERVER_IP
+ssh -i private_key.pem "azureadmin@$SERVER_IP"
 ```
 
 ### Install dependencies
@@ -39,7 +39,7 @@ sh ./get-docker.sh
 We have to log into our Azure container registry:
 
 ```bash,run
-docker login myregistry.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin <<< $(cat acr_token.txt)
+sudo docker login myregistry.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin <<< $(cat acr_token.txt)
 ```
 
 ### Download Docker Files
