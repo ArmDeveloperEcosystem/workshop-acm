@@ -19,3 +19,4 @@ East US
 - Microsoft.ManagedIdentity
 - Microsoft.Network
 - Microsoft.Resources
+- Microsoft.Storage
