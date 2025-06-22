@@ -41,10 +41,10 @@ check_resource() {
             az acr show --name "$resource_name" --subscription "$SUBSCRIPTION_ID" &>/dev/null
             ;;
         nodePool)
-            az aks nodepool show --cluster-name "${EXPECTED_RESOURCES[1]#*:}" --resource-group "${EXPECTED_RESOURCES[0]#*:}" --name "$resource_name" --subscription "$SUBSCRIPTION_ID" &>/dev/null
+            az aks nodepool show --cluster-name "${EXPECTED_RESOURCES[2]#*:}" --resource-group "${EXPECTED_RESOURCES[0]#*:}" --name "$resource_name" --subscription "$SUBSCRIPTION_ID" &>/dev/null
             ;;
         vm)
-            az vm show --name "$resource_name" --resource-group "${EXPECTED_RESOURCES[0]#*:}" --subscription "$SUBSCRIPTION_ID" &>/dev/null
+            az vm show --name "$resource_name" --resource-group "${EXPECTED_RESOURCES[1]#*:}" --subscription "$SUBSCRIPTION_ID" &>/dev/null
             ;;
         *)
             echo "Unknown resource type: $resource_type"
