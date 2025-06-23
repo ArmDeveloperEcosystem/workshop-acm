@@ -32,6 +32,7 @@ In each file, we will need to update the image URL to our ACR we pushed to in th
 In the `client-deployment.yaml` file, we will also need to set the environment variable to the `llmserver-service` IP address.
 
 ## Update `llmserver-deployment.yaml`
+===
 
 While in the [Editor](tab-1) tab, open the `llmserver-deployment.yaml` file.
 
@@ -55,8 +56,9 @@ to
 Make sure the file is saved. Once you have done so, we are ready to deploy.
 
 ## Deploy backend server
+===
 
-In your [Terminal tab](tab-0), write the following command to load your AKS credentials into your local kubernetes:
+In the [Terminal tab](tab-0), write the following command to load your AKS credentials into your local kubernetes:
 
 [button label="Terminal"](tab-0)
 
@@ -83,7 +85,6 @@ kubectl apply -f llmserver-deployment.yaml
 > Ensure you only deploying `llmserver-service` and `llmserver`, not the client ones! We will do that later.
 
 ### Test backend server
-===
 
 Let's check on our deployment by looking at our pods:
 
@@ -93,7 +94,10 @@ kubectl get pods
 
 You should see two pods running the same server application. Your load balancer will automatically assign a response from one upon getting a request.
 
-It may take a minute for the container to become running. In the mean time you can check if your service is ready with:
+> [!IMPORTANT]
+> It will take a minute for the container to become `Running` because it has to download the large container image.
+
+In the mean time you can check if your service is ready with:
 
 ```bash,run
 kubectl get svc
@@ -110,13 +114,13 @@ Once an external IP addressed is assigned, let's save that value to a variable:
 export SERVER_IP=$(kubectl get services llmserver-service --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ```
 
-Try it out by sending a ping using curl:
+Once the deployment is running and the IP address is assigned and save, let's try it out by sending a ping using curl:
 
 ```bash,run
 curl http://$SERVER_IP/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "llama3.1",
+    "model": "minstral",
     "stream": "true",
     "max_tokens": 200,
     "messages": [
@@ -138,6 +142,11 @@ You should get a series of json messages as a response.
 > If you don't get a response, do another `kubectl get pods` and ensure at least one deployment is in a `running` state.
 
 ## Update `client-deployment.yaml`
+===
+
+Switch back to the [Editor](tab-1) tab, open the `client-deployment.yaml` file.
+
+[button label="Editor"](tab-1)
 
 Now we are ready to deploy our frontend client.
 
@@ -183,6 +192,7 @@ Since we set our load balancer to route traffic from port 80, all we need is the
 Ensure the file is saved before deploying!
 
 ## Deploy frontend server
+===
 
 Back in your [Terminal tab](tab-0), let's deploy our `client-service`.
 
@@ -201,7 +211,6 @@ kubectl apply -f client-deployment.yaml
 All our services and deployments should now be live in our AKS.
 
 ### Ensure deployments were successful
-===
 
 We can ensure deployment was successful by looking at our pods:
 
@@ -221,6 +230,7 @@ kubectl get svc
 > If you still see a `pending` value for the external IP address, wait a moment and try again.
 
 ## Access the Streamlit frontend in your browser
+===
 
 To confirm the external IP address of our `client-service`, run the following command:
 
@@ -233,4 +243,4 @@ Open a new browser tab and go to `http://<EXTERNAL IP ADDRESS OF YOUR CLIENT-SER
 
 You should see a simple LLM based application, and be able to ask the bot any question you desire.
 
-When you are ready to move on, click the **Next** button below.
+When you are ready to move on, click the **Check** button below.

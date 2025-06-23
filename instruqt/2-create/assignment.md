@@ -18,7 +18,7 @@ az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-cl
 scp -i private_key.pem acr_token.txt "azureadmin@$SERVER_IP":~/acr_token.txt
 ```
 
-You will need to type "yes" to add your server's IP to the list of known hosts.
+You will need to type "yes" to add the server's IP to the list of known hosts.
 
 Connect to our VM via SSH:
 
@@ -32,10 +32,16 @@ Ensure we have docker installed:
 
 ```bash,run
 sudo apt-get update
-sudo apt-get install -y uidmap
+sudo apt-get install -y uidmap jq
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh ./get-docker.sh
-dockerd-rootless-setuptool.sh install
+# TODO: DO I need this line?
+# dockerd-rootless-setuptool.sh install
+cat /etc/docker/daemon.json | jq '. | .+{"features": {"containerd-snapshotter": true}}' | sudo tee /etc/docker/daemon.json
+cat /etc/docker/daemon.json
+sudo systemctl restart docker
+sudo docker run --privileged --rm tonistiigi/binfmt --install all
+
 ```
 
 ### Log into Azure
@@ -94,8 +100,11 @@ sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=
 
 Copy the above line, paste into the terminal, and then add your token value to the end of it.
 
-TODO: Quesiton mark here
-### Test backend?
+This step will take a while to download the model and convert it as part of creating the image.
+
+### Test backend
+
+Once our image is finally build, let's test it out to make sure it worked.
 
 Get the image id for `acmworkshopllm`
 
@@ -103,7 +112,12 @@ Get the image id for `acmworkshopllm`
 sudo docker images
 ```
 
-TODO: Show example of output
+You'll see a list of images like this:
+
+```md
+REPOSITORY       TAG       IMAGE ID       CREATED         SIZE
+acmworkshopllm   latest    82e366eb5025   3 minutes ago   22.5GB
+```
 
 Let's make sure our build worked correctly by running the image:
 
@@ -117,7 +131,7 @@ Once it's up and running, test it out via a local curl call:
 curl http://0.0.0.0:5000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "llama3.1",
+    "model": "minstral",
     "stream": "true",
     "max_tokens": 200,
     "messages": [
@@ -133,7 +147,13 @@ curl http://0.0.0.0:5000/v1/chat/completions \
   }'
 ```
 
-You should get a series of json messages as a response.
+If everything is working, you will get a series of json messages as a response. They should look like something like this:
+
+```json
+data:{"id": "chatcmpl-79002c5d-4c9d-4d33-aa5e-b41df1811220", "choices": [{"delta": {"role": "assistant", "content": "Hello"}}], "created": 1750702192, "model": "minstral", "system_fingerprint": "cpu_torch.bfloat16", "object": "chat.completion.chunk"}
+
+data:{"id": "chatcmpl-79002c5d-4c9d-4d33-aa5e-b41df1811220", "choices": [{"delta": {"role": "assistant", "content": "!"}, "index": 1}], "created": 1750702192, "model": "minstral", "system_fingerprint": "cpu_torch.bfloat16", "object": "chat.completion.chunk"}
+```
 
 ### Push backend to ACR
 
@@ -147,6 +167,8 @@ sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-clien
 > [!NOTE]
 > If you did not set your `random_id` to `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` during deployment, then you will have to edit the above line to use the actual name of your deployed Azure Container Registry.
 
+Due to the size of the image, the process will take a few minutes to upload the image to our ACR.
+
 ## Build frontend container
 
 Navigate to the client folder:
@@ -158,12 +180,9 @@ cd ../client
 We can build for both `amd64` and `arm64` and push the repo in one step:
 
 ```bash,run
-# TODO: Confirm this works
-# TODO: Do we need these?
-# TODO: sudo docker buildx build --platform linux/amd64,linux/arm64 -t acmworkshopclient .
-# TODO: sudo docker tag acmworkshopclient:latest avinzarlez979/acmworkshopclient:latest
-# TODO: sudo docker push avinzarlez979/acmworkshopclient:latest
-docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest -t acmworkshopclient .
+sudo docker buildx build --platform linux/amd64,linux/arm64 -t acmworkshopclient .
+sudo docker tag acmworkshopclient:latest workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.ioacmworkshopclient:latest
+sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest
 ```
 
 > [!NOTE]
@@ -171,7 +190,7 @@ docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag workshopa
 
 ## Cleanup
 
-When both images are pushed to the ACR, let's shut down your virtual machine to reduce resource spend.
+When both images are pushed to the ACR, let's shut down the virtual machine to reduce resource spend.
 
 First we need to exit out of our virtual machine:
 
@@ -182,7 +201,7 @@ exit
 Now shut down the virtual machine. We can always restart it if needed:
 
 ```bash,run
-az vm stop --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm
+az vm deallocate --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm
 ```
 
 Then click the **Check** button below.
