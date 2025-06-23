@@ -102,25 +102,10 @@ This step will take a while to download the model and convert it as part of crea
 
 ### Test backend
 
-Once our image is finally build, let's test it out to make sure it worked.
-
-Get the image id for `acmworkshopllm`
-
-```bash,run
-sudo docker images
-```
-
-You'll see a list of images like this:
-
-```md
-REPOSITORY       TAG       IMAGE ID       CREATED         SIZE
-acmworkshopllm   latest    82e366eb5025   3 minutes ago   22.5GB
-```
-
-Let's make sure our build worked correctly by running the image:
+Once our image is finally build, let's test it out to make sure it worked by running the image:
 
 ```bash
-sudo docker run -d -p 5000:5000 <image id>
+sudo docker run -d -p 5000:5000 acmworkshopllm:latest
 ```
 
 Once it's up and running, test it out via a local curl call:
