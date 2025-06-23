@@ -9,7 +9,7 @@ You can get the project from the [official GitHub page](https://github.com/ArmDe
 It should already be downloaded and set up for you in our terminal environment. Try it:
 
 ```bash,run
-kubearchinspect images
+./kubearchinspect images
 ```
 
 Our kubernetes cluster is fairly simple, but you should see output that shows you which container images already have `arm64` options.
