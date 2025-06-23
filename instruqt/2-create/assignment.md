@@ -95,7 +95,7 @@ cat > hf
 Using the access token you just created, generate the server backend container:
 
 ```bash,run
-sudo docker build -f server/Dockerfile -t acmworkshopllm --secret id=hf,src=./hf server
+sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest --secret id=hf,src=./hf server
 ```
 
 This step will take a while to download the model and convert it as part of creating the image.
@@ -105,7 +105,7 @@ This step will take a while to download the model and convert it as part of crea
 Once our image is finally build, let's test it out to make sure it worked by running the image:
 
 ```bash
-sudo docker run -d -p 5000:5000 acmworkshopllm:latest
+sudo docker run -d -p 5000:5000 workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest
 ```
 
 Once it's up and running, test it out via a local curl call:
@@ -143,7 +143,6 @@ data:{"id": "chatcmpl-79002c5d-4c9d-4d33-aa5e-b41df1811220", "choices": [{"delta
 Now push the image we just created to our Azure Container Registry (ACR), so that it can be deployed on our Azure Kubernetes Service (AKS):
 
 ```bash,run
-sudo docker tag acmworkshopllm:latest workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 ```
 
@@ -157,9 +156,7 @@ Due to the size of the image, the process will take a few minutes to upload the 
 We can build for both `amd64` and `arm64` and push the repo in one step:
 
 ```bash,run
-sudo docker buildx build -f client/Dockerfile --platform linux/amd64,linux/arm64 -t acmworkshopclient client
-sudo docker tag acmworkshopclient:latest workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.ioacmworkshopclient:latest
-sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest
+sudo docker buildx build -f client/Dockerfile --platform linux/amd64,linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest --push client
 ```
 
 > [!NOTE]
