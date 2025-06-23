@@ -51,6 +51,7 @@ sudo docker login workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-clie
 Download the docker files we need for our project:
 
 ```bash,run
+# TODO: Update these URLs to main branch
 curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
 curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
 ```
@@ -184,7 +185,7 @@ Now shut down the virtual machine. We can always restart it if needed:
 az vm stop --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm
 ```
 
-Then click the **Next** button below.
+Then click the **Check** button below.
 
 ## Overview of our LLM application
 ===

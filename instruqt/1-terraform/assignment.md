@@ -51,7 +51,7 @@ This will take a few minutes to run. Instruqt may give you a prompt you "Are you
 > This workshop assumes you used the instruqt generated value the random_id `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]`.
 > If you do not define the random_id variable, terraform will generate a unique string. However, you'll need to manually save the output values for later steps.
 
-When the terraform finishes deploying, click the **Next** button below.
+When the terraform finishes deploying, click the **Check** button below.
 
 ### What are we deploying?
 ===
