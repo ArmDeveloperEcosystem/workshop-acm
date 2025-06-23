@@ -35,13 +35,9 @@ sudo apt-get update
 sudo apt-get install -y uidmap jq
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh ./get-docker.sh
-# TODO: DO I need this line?
-# dockerd-rootless-setuptool.sh install
-cat /etc/docker/daemon.json | jq '. | .+{"features": {"containerd-snapshotter": true}}' | sudo tee /etc/docker/daemon.json
-cat /etc/docker/daemon.json
+echo '{"features": {"containerd-snapshotter": true}}' | sudo tee /etc/docker/daemon.json
 sudo systemctl restart docker
 sudo docker run --privileged --rm tonistiigi/binfmt --install all
-
 ```
 
 ### Log into Azure
