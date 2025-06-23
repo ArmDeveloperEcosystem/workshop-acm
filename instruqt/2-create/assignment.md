@@ -71,7 +71,7 @@ If you haven't already done this
 
 Now we are ready to create the `acmworkshopllm` image, that contains our backend service for our LLM application.
 
-### Create Access Token if you haven't already
+### Create Access Token
 
 - Go to [Hugging Face Access Tokens](https://huggingface.co/settings/tokens)
 - Click the **Create new token** on the top right
@@ -80,25 +80,22 @@ Now we are ready to create the `acmworkshopllm` image, that contains our backend
 - Click the **Create token** button
 - Copy the value to your clipboard in order to save the value in our development environment
 
-Run the following code to automatically paste the contents of your clipboard and save it to a file:
+Run the following code, then paste the contents of your clipboard to save it to a file:
 
 ```bash,run
 echo "Paste your Hugging Face token below, then press Ctrl+D when done:"
 cat > hf
 ```
 
+> [!IMPORTANT]
+> Make sure the only text in the file is your access token. You can double check the contents with `cat hf`.
+
 ### Build acmworkshopllm image
-
-Go to our backend server application folder:
-
-```bash,run
-cd server
-```
 
 Using the access token you just created, generate the server backend container:
 
 ```bash,run
-sudo docker build -t acmworkshopllm --secret id=hf,src=~/hf .
+sudo docker build -f server/Dockerfile -t acmworkshopllm --secret id=hf,src=./hf server
 ```
 
 This step will take a while to download the model and convert it as part of creating the image.
@@ -172,16 +169,10 @@ Due to the size of the image, the process will take a few minutes to upload the 
 
 ## Build frontend container
 
-Navigate to the client folder:
-
-```bash,run
-cd ../client
-```
-
 We can build for both `amd64` and `arm64` and push the repo in one step:
 
 ```bash,run
-sudo docker buildx build --platform linux/amd64,linux/arm64 -t acmworkshopclient .
+sudo docker buildx build -f client/Dockerfile --platform linux/amd64,linux/arm64 -t acmworkshopclient client
 sudo docker tag acmworkshopclient:latest workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.ioacmworkshopclient:latest
 sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest
 ```
@@ -189,23 +180,7 @@ sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-clien
 > [!NOTE]
 > Once again, if you didn't set `random_id` to `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` during deployment, then you will have to edit the above line to use the actual name of your deployed Azure Container Registry.
 
-## Cleanup
-
-When both images are pushed to the ACR, let's shut down the virtual machine to reduce resource spend.
-
-First we need to exit out of our virtual machine:
-
-```bash,run
-exit
-```
-
-Now shut down the virtual machine. We can always restart it if needed:
-
-```bash,run
-az vm deallocate --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]-vm
-```
-
-Then click the **Check** button below.
+Once the image is successfully pushed, click the **Check** button below.
 
 ## Overview of our LLM application
 ===

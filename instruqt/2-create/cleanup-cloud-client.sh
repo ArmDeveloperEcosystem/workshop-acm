@@ -3,5 +3,5 @@ set -euxo pipefail
 
 UNIQUE_ID=$(agent variable get randomid)
 
-# Stop the VM
-az vm deallocate --name workshop-vm --resource-group workshop-demo-rg-$UNIQUE_ID-vm
+# Remove the VM resource group, as we no longer need it
+az group delete --name workshop-demo-rg-$UNIQUE_ID-vm --no-wait --yes
