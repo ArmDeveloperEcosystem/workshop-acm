@@ -78,7 +78,13 @@ Now we are ready to create the `acmworkshopllm` image, that contains our backend
 - Change **Token type** to **Read**
 - Give it any name
 - Click the **Create token** button
-- Copy the Access Token and save it somewhere safe you can copy to in the next step.
+- Copy the value to your clipboard in order to save the value in our development environment
+
+Run the following code to automatically paste the contents of your clipboard and save it to a file:
+
+```bash,run
+pbpaste > hf
+```
 
 ### Build acmworkshopllm image
 
@@ -90,11 +96,9 @@ cd server
 
 Using the access token you just created, generate the server backend container:
 
-```bash
-sudo docker build -t acmworkshopllm . --secret id=hf,env=
+```bash,run
+sudo docker build -t acmworkshopllm --secret id=hf,src=~/hf .
 ```
-
-Copy the above line, paste into the terminal, and then add your token value to the end of it.
 
 This step will take a while to download the model and convert it as part of creating the image.
 

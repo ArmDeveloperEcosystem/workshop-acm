@@ -12,7 +12,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-RUN --mount=type=secret,id=hf,env=HF_TOKEN python -m venv torch_env && \
+RUN --mount=type=secret,id=hf \
+    python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Clone and patch pytorch/ao
     git clone --recursive https://github.com/pytorch/ao.git && \
@@ -36,10 +37,11 @@ RUN --mount=type=secret,id=hf,env=HF_TOKEN python -m venv torch_env && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Prepare hugging face cli 
     pip install -U "huggingface_hub[cli]" && \
-    # Don't need to log in because HF_TOKEN is set
-    # huggingface-cli login --token $HF_TOKEN && \
+    export HF_TOKEN=$(cat /run/secrets/hf) && \
+    # Prepare server file
     cd ../torchchat && \  
     find . -name server.py -exec sed -i -e "s/app\.run()/app.run(host='0.0.0.0')/" {} + && \
+    # Run torchchat export command
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
     # Cleanup
     unset HF_TOKEN && \
