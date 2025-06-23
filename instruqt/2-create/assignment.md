@@ -1,4 +1,4 @@
-# Build LLM Application and push to Azu∂e Container Registry
+# Build LLM Application and push to Azure Container Registry
 
 Now we need to ssh into our newly created virtual machine (VM), build our LLM application frontend and backend containers, and push those containers to our Azure Container Registry (ACR)
 
@@ -18,6 +18,8 @@ az acr login --name workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-cl
 scp -i private_key.pem acr_token.txt "azureadmin@$SERVER_IP":~/acr_token.txt
 ```
 
+You will need to type "yes" to add your server's IP to the list of known hosts.
+
 Connect to our VM via SSH:
 
 ```bash,run
@@ -30,8 +32,10 @@ Ensure we have docker installed:
 
 ```bash,run
 sudo apt-get update
+sudo apt-get install -y uidmap
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh ./get-docker.sh
+dockerd-rootless-setuptool.sh install
 ```
 
 ### Log into Azure
@@ -39,7 +43,7 @@ sh ./get-docker.sh
 We have to log into our Azure container registry:
 
 ```bash,run
-sudo docker login myregistry.azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin <<< $(cat acr_token.txt)
+sudo docker login workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io --username 00000000-0000-0000-0000-000000000000 --password-stdin <<< $(cat acr_token.txt)
 ```
 
 ### Download Docker Files
@@ -47,8 +51,8 @@ sudo docker login myregistry.azurecr.io --username 00000000-0000-0000-0000-00000
 Download the docker files we need for our project:
 
 ```bash,run
-curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
-curl https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
+curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
+curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
 ```
 
 ### Verify Hugging Face access to gated repos
@@ -84,9 +88,12 @@ cd server
 Using the access token you just created, generate the server backend container:
 
 ```bash
-sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=<paste your token from Hugging Face here>
+sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=
 ```
 
+Copy the above line, paste into the terminal, and then add your token value to the end of it.
+
+TODO: Quesiton mark here
 ### Test backend?
 
 Get the image id for `acmworkshopllm`
