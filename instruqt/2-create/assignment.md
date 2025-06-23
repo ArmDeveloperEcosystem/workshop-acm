@@ -95,7 +95,7 @@ cd server
 Using the access token you just created, generate the server backend container:
 
 ```bash
-sudo docker build -t acmworkshopllm . --build-arg HF_TOKEN=
+sudo docker build -t acmworkshopllm . --secret id=hf,env=
 ```
 
 Copy the above line, paste into the terminal, and then add your token value to the end of it.

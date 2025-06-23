@@ -1,10 +1,8 @@
 
 # syntax=docker/dockerfile:1
-ARG HF_TOKEN
 
 # Build: 1st stage
 FROM python:3.10-slim AS builder
-ARG HF_TOKEN
 EXPOSE 5000
 
 # Install dependencies and update packages to fix vulnerabilities
@@ -14,7 +12,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-RUN python -m venv torch_env && \
+RUN --mount=type=secret,id=hf,env=HF_TOKEN python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Clone and patch pytorch/ao
     git clone --recursive https://github.com/pytorch/ao.git && \
