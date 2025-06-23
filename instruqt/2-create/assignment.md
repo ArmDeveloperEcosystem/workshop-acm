@@ -83,7 +83,8 @@ Now we are ready to create the `acmworkshopllm` image, that contains our backend
 Run the following code to automatically paste the contents of your clipboard and save it to a file:
 
 ```bash,run
-pbpaste > hf
+echo "Paste your Hugging Face token below, then press Ctrl+D when done:"
+cat > hf
 ```
 
 ### Build acmworkshopllm image
