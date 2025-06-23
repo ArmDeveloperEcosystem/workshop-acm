@@ -168,21 +168,6 @@ docker buildx build --push --platform linux/arm64/v8,linux/amd64 --tag workshopa
 > [!NOTE]
 > Once again, if you didn't set `random_id` to `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]` during deployment, then you will have to edit the above line to use the actual name of your deployed Azure Container Registry.
 
-## Overview of our LLM application
-===
-
-Switch to the [Editor](tab-1) tab to take a look the application we will run today:
-
-[button label="Editor"](tab-1)
-
-The files we are interested in are in the `server` and `client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
-
-Torchchat is a library developed by the PyTorch team that facilitates running large language models (LLMs) seamlessly on a variety of devices. TorchAO (Torch Architecture Optimization) is a PyTorch library designed for enhancing the performance of ML models through different quantization and sparsity methods.
-
-We start by cloning the torchao and torchchat repositories and then applying the Arm specific patches. Then override the installed PyTorch version with a specific version of PyTorch required to take advantage of Arm KleidiAI optimizations.
-
-Finally we will download the [Mistral AI's 7B Instruct v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) model and quantize it to int 4-bit using Kernels for PyTorch. By using channel-wise quantization, the weights are quantized independently across different channels, or groups of channels. This can improve accuracy over simpler quantization methods.
-
 ## Cleanup
 
 When both images are pushed to the ACR, let's shut down your virtual machine to reduce resource spend.
@@ -200,3 +185,18 @@ az vm stop --name workshop-vm --resource-group workshop-demo-rg-[[ Instruqt-Var 
 ```
 
 Then click the **Next** button below.
+
+## Overview of our LLM application
+===
+
+Switch to the [Editor](tab-1) tab to take a look the application we will run today:
+
+[button label="Editor"](tab-1)
+
+The files we are interested in are in the `server` and `client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
+
+Torchchat is a library developed by the PyTorch team that facilitates running large language models (LLMs) seamlessly on a variety of devices. TorchAO (Torch Architecture Optimization) is a PyTorch library designed for enhancing the performance of ML models through different quantization and sparsity methods.
+
+We start by cloning the torchao and torchchat repositories and then applying the Arm specific patches. Then override the installed PyTorch version with a specific version of PyTorch required to take advantage of Arm KleidiAI optimizations.
+
+Finally we will download the [Mistral AI's 7B Instruct v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) model and quantize it to int 4-bit using Kernels for PyTorch. By using channel-wise quantization, the weights are quantized independently across different channels, or groups of channels. This can improve accuracy over simpler quantization methods.

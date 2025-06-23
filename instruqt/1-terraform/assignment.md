@@ -51,6 +51,8 @@ This will take a few minutes to run. Instruqt may give you a prompt you "Are you
 > This workshop assumes you used the instruqt generated value the random_id `[[ Instruqt-Var key="randomid" hostname="cloud-client" ]]`.
 > If you do not define the random_id variable, terraform will generate a unique string. However, you'll need to manually save the output values for later steps.
 
+When the terraform finishes deploying, click the **Next** button below.
+
 ### What are we deploying?
 ===
 
@@ -89,5 +91,3 @@ This file configured an Azure VM that we can access via public network using a S
 ### `outputs.tf`
 
 This file specifies the outputs of the Terraform project. Outputs values that are created by Terraform and can then be displayed to the user, or copied to other platforms like GitHub Actions.
-
-When the terraform finishes deploying, click the **Next** button below.
