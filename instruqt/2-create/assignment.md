@@ -86,12 +86,21 @@ Copy the following code, then paste your key at the end:
 export HF_TOKEN=
 ```
 
+Now save that variable to a file we can pass into our docker image as a secret:
+
+```bash,run
+echo $HF_TOKEN > hf
+```
+
+> [!IMPORTANT]
+> Make sure the only text in the file is your access token. You can double check the contents with `cat hf`.
+
 ### Build acmworkshopllm image
 
 Using the access token you just created, generate the server backend container:
 
 ```bash,run
-sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest --secret id=hf,env=HF_TOKEN server
+sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest --secret id=hf,src=./hf server
 ```
 
 This step will take a while to download the model and convert it as part of creating the image.
