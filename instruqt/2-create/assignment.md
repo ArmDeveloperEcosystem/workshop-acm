@@ -109,7 +109,7 @@ This step will take a while to download the model and convert it as part of crea
 
 Once our image is finally build, let's test it out to make sure it worked by running the image:
 
-```bash, run
+```bash,run
 sudo docker run -d -p 5000:5000 workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 ```
 
