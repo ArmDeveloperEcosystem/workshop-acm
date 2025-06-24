@@ -50,7 +50,6 @@ RUN . torch_env/bin/activate && \
 
 # Run torchchat export
 RUN --mount=type=secret,id=hf \
-    python -m venv torch_env && \
     . torch_env/bin/activate && \
     # Set up hugging face token
     export HF_TOKEN=$(cat /run/secrets/hf) && \
