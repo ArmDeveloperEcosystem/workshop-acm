@@ -12,35 +12,40 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-# Clone and patch pytorch/ao
+# Make python virtual environment
+RUN python -m venv torch_env
+
+# Clone and patch ao
 RUN git clone --recursive https://github.com/pytorch/ao.git && \
     cd ao && \
-    git checkout 174e630af2be8cd18bc47c5e530765a82e97f45b && \
-    wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Add-support-for-kleidiai-quantization-schemes.patch && \
-    git apply --whitespace=nowarn 0001-Feat-Add-support-for-kleidiai-quantization-schemes.patch && \
-    cd ../ && \
-    # Clone and patch pytorch/torchchat
-    git clone --recursive https://github.com/pytorch/torchchat.git && \
+    git checkout e1cb44ab84eee0a3573bb161d65c18661dc4a307 && \
+    curl -L https://github.com/pytorch/ao/commit/738d7f2c5a48367822f2bf9d538160d19f02341e.patch | git apply
+
+# Install torch ao
+RUN . torch_env/bin/activate && \
+    pip install torch && \
+    cd ao && \
+    python setup.py install
+
+# Clone and patch torchchat
+RUN git clone --recursive https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
     git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6 && \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-modified-generate.py-for-cli-and-browser.patch && \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
     git apply 0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
     git apply --whitespace=nowarn 0001-modified-generate.py-for-cli-and-browser.patch && \
-    wget https://github.com/ArmDeveloperEcosystem/PyTorch-arm-patches/raw/main/torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-    
+    sed -i 's/"groupsize": 0/"groupsize": 32/' config/data/aarch64_cpu_channelwise.json 
+
+# Install torchchat 
+RUN . torch_env/bin/activate && \
+    pip install -r torchchat/requirements.txt
+
 # Patch server.py to run on kubernetes
 RUN find . -name server.py -exec sed -i -e "s/app\.run()/app.run(host='0.0.0.0')/" {} +
 
-# Install pytorch/ao and torchchat dependencies
-RUN python -m venv torch_env && \
-    . torch_env/bin/activate && \
-    cd torchchat && \
-    pip install -r requirements.txt && \
-    pip install --force-reinstall torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
-    cd .. && \
-    pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
-    # Prepare hugging face cli 
+# Prepare hugging face cli 
+RUN . torch_env/bin/activate && \
     pip install -U "huggingface_hub[cli]"
 
 # Run torchchat export
@@ -62,3 +67,4 @@ RUN --mount=type=secret,id=hf \
     huggingface-cli logout
 
 CMD ["bash", "-c", ". torch_env/bin/activate && cd torchchat && LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libtcmalloc.so.4 TORCHINDUCTOR_CPP_WRAPPER=1 TORCHINDUCTOR_FREEZING=1 OMP_NUM_THREADS=16 python3 torchchat.py server mistral --dso-path exportedModels/mistral.so"]
+ 

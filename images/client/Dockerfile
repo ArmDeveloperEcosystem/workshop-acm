@@ -11,10 +11,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Clone and patch torchchat
 RUN git clone  https://github.com/pytorch/torchchat.git && \
     cd torchchat && \
-    git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6 && \
-    sed -i'e' '1s/^/import os\n/' browser/browser.py && \
+    git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6
+
+# Modify generate.py to use environment variable for base URL
+RUN sed -i'e' '1s/^/import os\n/' browser/browser.py && \
     sed -i'e' 's|127\.0\.0\.1:5000|"+os.environ.get("TORCHCHAT_BASE_URL", "127.0.0.1:5000")+"|' browser/browser.py
 
 # Release: 2nd stage
@@ -28,6 +31,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install python dependencies
 RUN python -m venv torch_env && \
     . torch_env/bin/activate && \
     pip install streamlit && \
