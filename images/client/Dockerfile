@@ -17,8 +17,8 @@ RUN git clone  https://github.com/pytorch/torchchat.git && \
     git checkout 925b7bd73f110dd1fb378ef80d17f0c6a47031a6
 
 # Modify browser.py to use environment variable for base URL
-RUN sed -i'e' '1s/^/import os\n/' browser/browser.py && \
-    sed -i'e' 's|127\.0\.0\.1:5000|"+os.environ.get("TORCHCHAT_BASE_URL", "127.0.0.1:5000")+"|' browser/browser.py
+RUN sed -i'e' '1s/^/import os\n/' torchchat/browser/browser.py && \
+    sed -i'e' 's|127\.0\.0\.1:5000|"+os.environ.get("TORCHCHAT_BASE_URL", "127.0.0.1:5000")+"|' torchchat/browser/browser.py
 
 # Release: 2nd stage
 FROM python:3.10-slim
