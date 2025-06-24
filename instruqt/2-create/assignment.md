@@ -78,24 +78,20 @@ Now we are ready to create the `acmworkshopllm` image, that contains our backend
 - Change **Token type** to **Read**
 - Give it any name
 - Click the **Create token** button
-- Copy the value to your clipboard in order to save the value in our development environment
+- Copy the value to your clipboard and save it in our development environment
 
-Run the following code, then paste the contents of your clipboard to save it to a file:
+Copy the following code, then paste your key at the end:
 
-```bash,run
-echo "Paste your Hugging Face token below, then press Ctrl+D when done:"
-cat > hf
+```bash
+export HF_TOKEN=
 ```
-
-> [!IMPORTANT]
-> Make sure the only text in the file is your access token. You can double check the contents with `cat hf`.
 
 ### Build acmworkshopllm image
 
 Using the access token you just created, generate the server backend container:
 
 ```bash,run
-sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest --secret id=hf,src=./hf server
+sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest --secret id=hf,env=HF_TOKEN server
 ```
 
 This step will take a while to download the model and convert it as part of creating the image.
@@ -104,8 +100,8 @@ This step will take a while to download the model and convert it as part of crea
 
 Once our image is finally build, let's test it out to make sure it worked by running the image:
 
-```bash
-sudo docker run -d -p 5000:5000 workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopclient:latest
+```bash, run
+sudo docker run -d -p 5000:5000 workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-client" ]].azurecr.io/acmworkshopllm:latest
 ```
 
 Once it's up and running, test it out via a local curl call:

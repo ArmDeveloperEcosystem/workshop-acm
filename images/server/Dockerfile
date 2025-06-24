@@ -12,11 +12,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-RUN --mount=type=secret,id=hf \
-    python -m venv torch_env && \
-    . torch_env/bin/activate && \
-    # Clone and patch pytorch/ao
-    git clone --recursive https://github.com/pytorch/ao.git && \
+# Clone and patch pytorch/ao
+RUN git clone --recursive https://github.com/pytorch/ao.git && \
     cd ao && \
     git checkout 174e630af2be8cd18bc47c5e530765a82e97f45b && \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Add-support-for-kleidiai-quantization-schemes.patch && \
@@ -30,18 +27,30 @@ RUN --mount=type=secret,id=hf \
     wget https://raw.githubusercontent.com/ArmDeveloperEcosystem/PyTorch-arm-patches/main/0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
     git apply 0001-Feat-Enable-int4-quantized-models-to-work-with-pytor.patch && \
     git apply --whitespace=nowarn 0001-modified-generate.py-for-cli-and-browser.patch && \
+    wget https://github.com/ArmDeveloperEcosystem/PyTorch-arm-patches/raw/main/torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+    
+# Patch server.py to run on kubernetes
+RUN find . -name server.py -exec sed -i -e "s/app\.run()/app.run(host='0.0.0.0')/" {} +
+
+# Install pytorch/ao and torchchat dependencies
+RUN python -m venv torch_env && \
+    . torch_env/bin/activate && \
+    cd torchchat && \
     pip install -r requirements.txt && \
-    wget https://github.com/ArmDeveloperEcosystem/PyTorch-arm-patches/raw/main/torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
     pip install --force-reinstall torch-2.5.0.dev20240828+cpu-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl && \
     cd .. && \
     pip uninstall torchao && cd ao/ && rm -rf build && python setup.py install && \
     # Prepare hugging face cli 
-    pip install -U "huggingface_hub[cli]" && \
+    pip install -U "huggingface_hub[cli]"
+
+# Run torchchat export
+RUN --mount=type=secret,id=hf \
+    python -m venv torch_env && \
+    . torch_env/bin/activate && \
+    # Set up hugging face token
     export HF_TOKEN=$(cat /run/secrets/hf) && \
-    # Prepare server file
-    cd ../torchchat && \  
-    find . -name server.py -exec sed -i -e "s/app\.run()/app.run(host='0.0.0.0')/" {} + && \
     # Run torchchat export command
+    cd torchchat && \  
     python torchchat.py export mistral --output-dso-path exportedModels/mistral.so --quantize config/data/aarch64_cpu_channelwise.json --device cpu --max-seq-length 1024 && \
     # Cleanup
     unset HF_TOKEN && \
