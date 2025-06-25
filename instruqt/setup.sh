@@ -39,3 +39,7 @@ echo "Logged in using service principal. Using Azure location: $location"
 # Clone Git repo
 ###############################################################################
 git clone https://github.com/ArmDeveloperEcosystem/workshop-acm.git acm
+
+# TODO: Remove these extra steps
+cd acm
+git checkout development
