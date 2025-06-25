@@ -3,6 +3,7 @@
 Now we need to ssh into our newly created virtual machine (VM), build our LLM application frontend and backend containers, and push those containers to our Azure Container Registry (ACR)
 
 ## Prepare our environment
+===
 
 Set the file permissions for our private key and get our VM's public ip address
 
@@ -68,6 +69,7 @@ If you haven't already done this
   - Click the **Agree and Access Repository** button
 
 ## Build backend container
+===
 
 Now we are ready to create the `acmworkshopllm` image, that contains our backend service for our LLM application.
 
@@ -105,7 +107,8 @@ sudo docker buildx build -f server/Dockerfile --platform linux/arm64 -t workshop
 
 This step will take a while to download the model and convert it as part of creating the image.
 
-### Test backend
+## Test and push backend
+===
 
 Once our image is finally build, let's test it out to make sure it worked by running the image:
 
@@ -157,6 +160,7 @@ sudo docker push workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-clien
 Due to the size of the image, the process will take a few minutes to upload the image to our ACR.
 
 ## Build frontend container
+===
 
 We can build for both `amd64` and `arm64` and push the repo in one step:
 
@@ -175,6 +179,8 @@ Once the image is successfully pushed, click the **Check** button below.
 Switch to the [Editor](tab-1) tab to take a look the application we will run today:
 
 [button label="Editor"](tab-1)
+
+![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/diagram/kubernetes.svg)
 
 The files we are interested in are in the `server` and `client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
 

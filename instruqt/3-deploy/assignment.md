@@ -9,6 +9,8 @@ In the [Editor](tab-1) tab, let's look through the various `yaml` files we will 
 
 [button label="Editor"](tab-1)
 
+![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/diagram/kubernetes.svg)
+
 ### Services
 
 `llmserver-service.yaml` and `client-service.yaml` create our services in kubernetes. These set up load balancers with an external facing IP address that will direct traffic to our applications, regardless of what nodes those deployments are running on.

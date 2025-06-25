@@ -9,6 +9,8 @@ This tutorial provides a step-by-step guide to:
 
 This is meant to be consumed via an Instruqt workshop, but you can follow along with just this repo.
 
+![Kubernetes Architecture](diagram/kubernetes.svg)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
