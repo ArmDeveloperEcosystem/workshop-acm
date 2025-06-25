@@ -54,9 +54,8 @@ sudo docker login workshopacr[[ Instruqt-Var key="randomid" hostname="cloud-clie
 Download the docker files we need for our project:
 
 ```bash,run
-# TODO: Update these URLs to main branch
-curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/client/Dockerfile --create-dirs -o client/Dockerfile 
-curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/images/server/Dockerfile --create-dirs -o server/Dockerfile 
+curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/main/images/client/Dockerfile --create-dirs -o client/Dockerfile 
+curl https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/main/images/server/Dockerfile --create-dirs -o server/Dockerfile 
 ```
 
 ### Verify Hugging Face access to gated repos
@@ -180,7 +179,7 @@ Switch to the [Editor](tab-1) tab to take a look the application we will run tod
 
 [button label="Editor"](tab-1)
 
-![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/diagram/kubernetes.svg)
+![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/main/diagram/kubernetes.svg)
 
 The files we are interested in are in the `server` and `client` folders. In each there is a `Dockerfile` that defines how our application image will be created.
 

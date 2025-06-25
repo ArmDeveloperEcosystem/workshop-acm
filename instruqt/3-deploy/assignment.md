@@ -9,7 +9,7 @@ In the [Editor](tab-1) tab, let's look through the various `yaml` files we will 
 
 [button label="Editor"](tab-1)
 
-![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/development/diagram/kubernetes.svg)
+![Kubernetes Architecture](https://raw.githubusercontent.com/ArmDeveloperEcosystem/workshop-acm/refs/heads/main/diagram/kubernetes.svg)
 
 ### Services
 
