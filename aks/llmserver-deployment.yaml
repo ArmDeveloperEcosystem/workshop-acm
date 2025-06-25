@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llmserver-deployment
+  labels:
+    app: llmserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: llmserver
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: llmserver
+        tier: web
+    spec:
+      containers:
+      - name: llmserver
+        image: <your deployed ACR name>.azurecr.io/acmworkshopllm:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5000
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 8000Mi
+          limits:
+            cpu: 8000m
+            memory: 32000Mi
+      nodeSelector:
+        kubernetes.io/arch: arm64

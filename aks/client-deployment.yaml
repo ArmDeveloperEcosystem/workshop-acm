@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+  labels:
+    app: client
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: client
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: client
+        tier: web
+    spec:
+      containers:
+      - name: client
+        image: <your deployed ACR name>.azurecr.io/acmworkshopclient:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8501
+        env:
+          - name: TORCHCHAT_BASE_URL
+            value: <server.url:port>
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+      nodeSelector:
+        kubernetes.io/arch: amd64
