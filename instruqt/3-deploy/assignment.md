@@ -2,6 +2,12 @@
 
 Now that we have all the pieces in place, it's time to deploy and run our application itself using kuberneters.
 
+Ensure we are in the correct AKS folder by running:
+
+```bash,run
+cd ~/acm/aks
+```
+
 ## File Explanation
 ===
 

@@ -15,5 +15,7 @@ vbell off
 # Increase the scrollback buffer
 defscrollback 5000
 
-EOF
+# Mouse scroll
+termcapinfo xterm* ti@:te@
 
+EOF
