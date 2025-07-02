@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# This is used to set up persistent environment for the workshop.
+apt -y update
+DEBIAN_FRONTEND=noninteractive
+apt install -y screen
+
 ###############################################################################
 # Azure ARM-based VM Launch Script (using standard service principal credentials)
 #
