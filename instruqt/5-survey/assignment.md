@@ -1,6 +1,7 @@
 Your feedback helps us improve! Take our short survey to share with us what your focus and needs are, and how we can better help you achieve your goals.
 
-[!]
+![QR code for https://www.surveymonkey.com/r/WAD2025-ACM](https://github.com/ArmDeveloperEcosystem/workshop-acm/blob/wearedevelopers/instruqt/5-survey/QR_code_WAD2025-ACM.png)
+
 [https://www.surveymonkey.com/r/WAD2025-ACM](https://www.surveymonkey.com/r/WAD2025-ACM)
 
 After you finish the survey, click the "**Next**" button below.
